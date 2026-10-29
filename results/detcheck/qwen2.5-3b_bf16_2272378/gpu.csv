@@ -1,0 +1,2 @@
+name, driver_version, compute_cap, memory.total [MiB], uuid
+NVIDIA A100 80GB PCIe, 595.84, 8.0, 81920 MiB, GPU-aa109248-ccba-6775-667a-ddac48bf107a

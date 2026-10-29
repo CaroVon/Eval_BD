@@ -1,0 +1,7 @@
+third_party/
+logs/
+__pycache__/
+*.pyc
+*.tar
+*.safetensors
+*.gguf
