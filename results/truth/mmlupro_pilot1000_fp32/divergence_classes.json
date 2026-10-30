@@ -1,0 +1,77 @@
+{
+ "Q8_0": {
+  "n_D": 801,
+  "classes": {
+   "word": 623,
+   "digit": 24,
+   "punct/markup": 90,
+   "space/newline": 3,
+   "split": 60,
+   "opener": 1
+  },
+  "same_answer": 0.7191011235955056,
+  "resync": 0.7815230961298377,
+  "A": 337,
+  "A_resync": 273,
+  "A_resync_harm": 37,
+  "A_nores_same": 48,
+  "A_nores_changed": 16,
+  "A_harm": 53
+ },
+ "Q6_K": {
+  "n_D": 988,
+  "classes": {
+   "word": 803,
+   "punct/markup": 104,
+   "split": 57,
+   "space/newline": 5,
+   "digit": 12,
+   "opener": 7
+  },
+  "same_answer": 0.6366396761133604,
+  "resync": 0.7115384615384616,
+  "A": 437,
+  "A_resync": 317,
+  "A_resync_harm": 54,
+  "A_nores_same": 90,
+  "A_nores_changed": 30,
+  "A_harm": 84
+ },
+ "Q4_K_M": {
+  "n_D": 1000,
+  "classes": {
+   "word": 783,
+   "punct/markup": 127,
+   "digit": 9,
+   "opener": 29,
+   "split": 47,
+   "space/newline": 5
+  },
+  "same_answer": 0.594,
+  "resync": 0.607,
+  "A": 446,
+  "A_resync": 286,
+  "A_resync_harm": 55,
+  "A_nores_same": 113,
+  "A_nores_changed": 47,
+  "A_harm": 102
+ },
+ "Q3_K_M": {
+  "n_D": 1000,
+  "classes": {
+   "opener": 272,
+   "word": 687,
+   "punct/markup": 30,
+   "split": 10,
+   "digit": 1
+  },
+  "same_answer": 0.314,
+  "resync": 0.245,
+  "A": 446,
+  "A_resync": 123,
+  "A_resync_harm": 67,
+  "A_nores_same": 111,
+  "A_nores_changed": 212,
+  "A_harm": 279
+ }
+}
