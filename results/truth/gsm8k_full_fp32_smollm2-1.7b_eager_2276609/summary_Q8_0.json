@@ -1,0 +1,56 @@
+{
+ "name": "Q8_0",
+ "n": 1319,
+ "acc_parent": 0.4116755117513268,
+ "acc_child": 0.42380591357088704,
+ "D_frac": 0.5526914329037149,
+ "A_over_P": 0.4696132596685083,
+ "harm_flips_in_P": 42,
+ "repair_flips": 58,
+ "flips_outside_D": 0,
+ "lemma3a_violations": 0,
+ "lemma3b_violations": 0,
+ "questions_with_ties": 2,
+ "tie_positions": 2,
+ "tie_rule_violations": 0,
+ "topk_saturated_positions": 2,
+ "A_over_P_conservative": 0.4696132596685083,
+ "t_star_median": 64,
+ "decode_tokens_full": 321398,
+ "decode_tokens_cont": 123538,
+ "prefill_tokens": 464540,
+ "seconds": {
+  "full_s": 70.67308640480042,
+  "prefill_s": 23.47373342514038,
+  "cont_s": 44.29735517501831
+ },
+ "config": {
+  "vllm": "0.32.0",
+  "torch": "2.13.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "capability": [
+   8,
+   0
+  ],
+  "node": "j004-ds",
+  "slurm_job": "2276609",
+  "env": {
+   "CUDA_VISIBLE_DEVICES": "0",
+   "VLLM_BATCH_INVARIANT": "1"
+  },
+  "args": {
+   "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/dequant_fp32/smollm2-1.7b-instruct-Q8_0",
+   "name": "Q8_0",
+   "parent_gen": "/net/spaces/jevans/klab/caroyf/outputs/ICML/truth/gsm8k_full_fp32_smollm2-1.7b_eager_2276609/parent_gen/gen_A.jsonl",
+   "data_dir": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k",
+   "ids": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k/all_test_ids.json",
+   "out_dir": "/net/spaces/jevans/klab/caroyf/outputs/ICML/truth/gsm8k_full_fp32_smollm2-1.7b_eager_2276609/screen",
+   "max_tokens": 1024,
+   "max_num_seqs": 256,
+   "topk": 2,
+   "dtype": "float32",
+   "enforce_eager": true
+  }
+ }
+}

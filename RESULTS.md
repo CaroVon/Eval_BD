@@ -496,7 +496,43 @@ True worst-slice theta / H: Q8_0 0.028 / 0.079, Q6_K 0.033 / 0.112. With an incl
 0.95 the net certificate passes Q8_0 on all 23 slices in 37% of reps (harm certificate: never);
 cost 1.08 (ours) vs 0.95 (B1) of full evaluation.
 
+## 26. Third family (exploratory): SmolLM2-1.7B-Instruct @ 31b70e2, GSM8K 1,319, fp32, eager
+
+Apache-2.0, not gated, llama architecture, single-file checkpoint. Four-layer determinism check
+passes in eager mode (job 2276609). Weight error (median): Q8_0 0.54%, Q6_K 1.79%, Q4_K_M 7.17%,
+Q3_K_M 7.27%. Local decoding matches vLLM text on 1,319/1,319 after treating vocab-listed special
+tokens as empty (`src/tokdecode.py`; Phi and Qwen outputs unchanged, checked).
+
+| Version | \|A\|/\|P\| | harm / repair | same answer in D | lemma 3 violations |
+|---|---|---|---|---|
+| Q8_0 | **0.470** | 42 / 58 | 57% | 0 |
+| Q6_K | 0.878 | 105 / 115 | 52% | 0 |
+| Q4_K_M | 0.996 | 197 / 136 | 37% | 0 |
+| Q3_K_M | 1.000 | 333 / 92 | 23% | 0 |
+
+Parent accuracy 41.2% (|P| = 543). The model rarely writes "####" (answer span found in 230/1,319),
+so the answer-margin analysis is not informative here.
+
+**Margin scaling law, all four parent x task combinations:**
+
+| Parent / dataset | f_m(0) | predicted rho/sigma | observed rho/sigma, Q8 / Q6 / Q4 / Q3 |
+|---|---|---|---|
+| Qwen2.5-3B / GSM8K | 0.12 | 0.048 | 0.040 / 0.044 / 0.037 / (not noise-like) |
+| Qwen2.5-3B / MMLU-Pro | 0.19 | 0.077 | 0.071 / 0.074 / 0.068 / - |
+| Phi-3.5-mini / GSM8K | 0.07 | 0.028 | 0.027 / 0.027 / 0.023 / 0.026 |
+| SmolLM2-1.7B / GSM8K | 0.124 | 0.049 | 0.047 / 0.048 / 0.050 / 0.053 |
+
+Noise sd per bit width (Q8 / Q6 / Q4): Qwen 0.07 / 0.23 / 0.83, Phi 0.08 / 0.26 / 0.90,
+SmolLM2 0.076 / 0.26 / 0.77. SmolLM2's Q4_K_M has 2.5x the median weight error of the other two
+families but the same logit noise, so median weight error is a poor proxy for sigma_q.
+Predictor with 50 calibration questions: Q8_0 0.466 vs 0.467 observed, Q6_K 0.901 vs 0.879.
+Flip direction is model-dependent: SmolLM2 Q8_0 is repair-heavy (42/58), Phi harm-heavy, Qwen even.
+
+Equal budget, SmolLM2 Q8_0 (true worst-slice H / theta 0.052 / 0.003): net certificate with
+screening 0.009 at b = 0.8 vs 0.040 for B1 (about 4.4x tighter); harm certificates saturate at H
+by b = 0.4 for both. Q6_K: screening never better.
+
 ## Not yet measured
 
-Phi-3.5 on MMLU-Pro, SmolLM2 (third family), second parent family, remaining baselines (B2-B6),
+Phi-3.5 on MMLU-Pro, second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.

@@ -94,3 +94,20 @@ if [ -d $T/screen ]; then
   for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do cp $T/screen/$m/summary.json $R/truth/mmlupro_3000_fp32/summary_$m.json 2>/dev/null || true; done
   cp $T/sim_*.json $T/net_*.json $R/truth/mmlupro_3000_fp32/ 2>/dev/null || true
 fi
+# other parents generic (smollm2, phi on other datasets)
+for d in $O/truth/*smollm2* $O/truth/*phi-3.5-mini*; do
+  [ -d "$d/screen" ] || continue
+  b=$(basename $d); mkdir -p $R/truth/$b
+  for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do cp $d/screen/$m/summary.json $R/truth/$b/summary_$m.json 2>/dev/null || true; done
+  cp $d/divergence_classes.json $d/answer_margin.json $d/sim_*.json $d/eq_budget_*.json $d/*analysis.txt $R/truth/$b/ 2>/dev/null || true
+  cp $d/margins/analysis.json $R/truth/$b/margin_analysis.json 2>/dev/null || true
+  cp $d/margins/predict_D_*.json $R/truth/$b/ 2>/dev/null || true
+done
+for d in $O/detcheck/smollm2*; do
+  [ -d "$d" ] || continue
+  b=$(basename $d); mkdir -p $R/detcheck/$b; cp $d/report.json $d/run_*.json $R/detcheck/$b/ 2>/dev/null || true
+done
+for q in Q8_0 Q6_K Q4_K_M Q3_K_M; do
+  cp $K/data/ICML/models/dequant_fp32/smollm2-1.7b-instruct-$q/MANIFEST.json $R/manifests/fp32_smollm2-1.7b-instruct_$q.json 2>/dev/null || true
+done
+cp $K/data/ICML/models/hf/SmolLM2-1.7B-Instruct/PINNED_REVISION.json $R/pins/smollm2-1.7b-instruct.json 2>/dev/null || true

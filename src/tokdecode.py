@@ -30,7 +30,10 @@ def load(path):
     inv = {v: k for k, v in vocab.items()}
     if is_tok_json:
         for t in d.get("added_tokens", []):
-            inv.setdefault(t["id"], "")  # special tokens decode to nothing
+            if t.get("special", False):
+                inv[t["id"]] = ""  # special tokens decode to nothing (some vocabs also list them)
+            else:
+                inv.setdefault(t["id"], t["content"])
     sp = sum(1 for k in vocab if k.startswith("▁")) > sum(1 for k in vocab if k.startswith("Ġ"))
 
     if not sp:

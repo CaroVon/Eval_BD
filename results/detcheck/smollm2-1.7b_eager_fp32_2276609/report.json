@@ -1,0 +1,32 @@
+{
+ "accuracy_A": 0.385,
+ "hit_max_tokens_A": 2,
+ "mean_out_tokens_A": 259.525,
+ "L1_repeat_A_vs_B": {
+  "n": 200,
+  "token_seq_diff": 0,
+  "answer_diff": 0,
+  "diff_ids": []
+ },
+ "L2_prefill_vs_decode": {
+  "tokens": 51905,
+  "mismatch_tokens": 0,
+  "token_rate": 0.0,
+  "questions_with_mismatch": 0,
+  "questions_with_exact_tie": 0,
+  "examples": []
+ },
+ "L3_continuation": {
+  "n": 400,
+  "not_equal": 0,
+  "questions_affected": 0,
+  "examples": []
+ },
+ "L4_batch_A_vs_C": {
+  "n": 200,
+  "token_seq_diff": 0,
+  "answer_diff": 0,
+  "diff_ids": []
+ },
+ "ALL_FOUR_LAYERS_PASS": true
+}
