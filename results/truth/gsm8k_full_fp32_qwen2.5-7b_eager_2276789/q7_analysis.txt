@@ -1,0 +1,118 @@
+### decode check
+decode matches vLLM text: 1319/1319
+### hazard model + cascade
+== q7_truth
+Q8_0    rho=0.0016  |D|/N obs by length quartile [0.28 0.28 0.35 0.43] pred [0.25 0.31 0.36 0.45]
+        t*=0 share of D 0.02  hazard@0=0.007  rho(t>0)=0.0016  median t*/T=0.30
+        flips in A: 13/369 = 0.035  (early t* 8/184, late t* 5/185)  harm/repair = 13/6
+Q6_K    rho=0.0053  |D|/N obs by length quartile [0.61 0.66 0.73 0.81] pred [0.61 0.71 0.77 0.86]
+        t*=0 share of D 0.03  hazard@0=0.024  rho(t>0)=0.0051  median t*/T=0.22
+        flips in A: 27/804 = 0.034  (early t* 19/398, late t* 8/406)  harm/repair = 27/23
+Q4_K_M  rho=0.0169  |D|/N obs by length quartile [0.91 0.95 0.96 0.99] pred [0.95 0.98 0.99 1.  ]
+        t*=0 share of D 0.07  hazard@0=0.063  rho(t>0)=0.0161  median t*/T=0.10
+        flips in A: 46/1102 = 0.042  (early t* 30/548, late t* 16/554)  harm/repair = 46/36
+Q3_K_M  rho=0.0393  |D|/N obs by length quartile [0.98 1.   1.   1.  ] pred [1. 1. 1. 1.]
+        t*=0 share of D 0.07  hazard@0=0.071  rho(t>0)=0.0380  median t*/T=0.06
+        flips in A: 68/1157 = 0.059  (early t* 33/559, late t* 35/598)  harm/repair = 68/45
+### margins
+== q7_truth  positions=356954  parent margin quantiles (5/25/50/75%): [ 0.701  4.465 11.696 16.988]  min=0.0001
+   share of positions with margin < 0.1 / 0.5 / 1 / 2: [0.0078, 0.0361, 0.0698, 0.1298]
+-- Q8_0: sigma=0.056  teacher-forced divergence rate 0.0016  |D|/N obs 0.335 pred 0.355  corr(d, m)=0.113
+   P(div | parent margin bin) obs : [0.1914, 0.0066, 0.0002, 0.0, 0.0, 0.0, 0.0]
+                              pred: [0.212, 0.0058, 0.0, 0.0, 0.0, 0.0, 0.0]
+   sd of perturbation by margin bin: [0.054, 0.053, 0.053, 0.053, 0.054, 0.057, 0.072]
+   question-level calibration (pred, obs) by quintile: [(0.02, 0.02), (0.15, 0.11), (0.34, 0.31), (0.52, 0.54), (0.73, 0.69)]
+   by token class (class, share of positions, median margin, div rate, share of divs): [('opener', 0.004, 1.39, 0.0068, 0.016), ('word', 0.463, 7.31, 0.0024, 0.697), ('punct/markup', 0.267, 12.59, 0.0013, 0.226), ('digit', 0.163, 18.46, 0.0002, 0.022), ('space/newline', 0.103, 14.72, 0.0006, 0.039)]
+-- Q6_K: sigma=0.170  teacher-forced divergence rate 0.0049  |D|/N obs 0.704 pred 0.707  corr(d, m)=-0.182
+   P(div | parent margin bin) obs : [0.3778, 0.1445, 0.0194, 0.0011, 0.0, 0.0, 0.0]
+                              pred: [0.3841, 0.1619, 0.0212, 0.0002, 0.0, 0.0, 0.0]
+   sd of perturbation by margin bin: [0.163, 0.166, 0.162, 0.168, 0.168, 0.178, 0.224]
+   question-level calibration (pred, obs) by quintile: [(0.35, 0.31), (0.61, 0.64), (0.75, 0.77), (0.86, 0.83), (0.96, 0.96)]
+   by token class (class, share of positions, median margin, div rate, share of divs): [('opener', 0.004, 1.39, 0.0243, 0.018), ('word', 0.463, 7.31, 0.0079, 0.752), ('punct/markup', 0.267, 12.59, 0.0033, 0.178), ('digit', 0.163, 18.46, 0.0005, 0.018), ('space/newline', 0.103, 14.72, 0.0016, 0.033)]
+-- Q4_K_M: sigma=0.555  teacher-forced divergence rate 0.0149  |D|/N obs 0.951 pred 0.968  corr(d, m)=-0.353
+   P(div | parent margin bin) obs : [0.4725, 0.3696, 0.224, 0.0803, 0.0093, 0.0006, 0.0]
+                              pred: [0.4636, 0.378, 0.2521, 0.0969, 0.0082, 0.0, 0.0]
+   sd of perturbation by margin bin: [0.512, 0.515, 0.502, 0.508, 0.507, 0.55, 0.733]
+   question-level calibration (pred, obs) by quintile: [(0.88, 0.82), (0.97, 0.96), (0.99, 0.98), (1.0, 1.0), (1.0, 1.0)]
+   by token class (class, share of positions, median margin, div rate, share of divs): [('opener', 0.004, 1.39, 0.0629, 0.016), ('word', 0.463, 7.31, 0.0241, 0.75), ('punct/markup', 0.267, 12.59, 0.0094, 0.169), ('digit', 0.163, 18.46, 0.0025, 0.027), ('space/newline', 0.103, 14.72, 0.0056, 0.039)]
+-- Q3_K_M: sigma=1.086  teacher-forced divergence rate 0.0291  |D|/N obs 0.995 pred 0.997  corr(d, m)=-0.331
+   P(div | parent margin bin) obs : [0.5049, 0.4473, 0.3855, 0.2344, 0.0798, 0.0082, 0.0001]
+                              pred: [0.4814, 0.4368, 0.3657, 0.2481, 0.0927, 0.0075, 0.0]
+   sd of perturbation by margin bin: [0.99, 0.972, 0.973, 0.972, 0.969, 1.028, 1.323]
+   question-level calibration (pred, obs) by quintile: [(0.99, 0.97), (1.0, 1.0), (1.0, 1.0), (1.0, 1.0), (1.0, 1.0)]
+   by token class (class, share of positions, median margin, div rate, share of divs): [('opener', 0.004, 1.39, 0.0705, 0.009), ('word', 0.463, 7.31, 0.0456, 0.726), ('punct/markup', 0.267, 12.59, 0.0222, 0.204), ('digit', 0.163, 18.46, 0.0035, 0.02), ('space/newline', 0.103, 14.72, 0.0117, 0.041)]
+### divergence classes
+== q7_truth
+Q8_0    |D|=442  same answer 0.934  resync within 30 tok 0.814  median text similarity 0.85
+     word           64.9%  resync 0.84  same-ans 0.94  harm|P 7/238
+     punct/markup   21.3%  resync 0.79  same-ans 0.96  harm|P 3/84
+     split           8.1%  resync 0.78  same-ans 0.83  harm|P 2/27
+     digit           2.3%  resync 0.70  same-ans 0.90  harm|P 0/6
+     opener          2.0%  resync 0.67  same-ans 0.89  harm|P 1/8
+     space/newline   1.4%  resync 0.50  same-ans 1.00  harm|P 0/6
+     A=369: resync 302 (harm 8), no-resync same-answer 62 (harm 0), no-resync changed-answer 5 (harm 5)
+     top t* token pairs (parent | child): [("'To'|'Let'", 9), ("'.\\n\\n'|' to'", 9), ("':\\n\\n'|' to'", 9), ("' So'|' Therefore'", 6), ("' ####'|' \\n\\n'", 4), ("' we'|' let'", 4)]
+Q6_K    |D|=928  same answer 0.929  resync within 30 tok 0.853  median text similarity 0.85
+     word           69.0%  resync 0.88  same-ans 0.93  harm|P 17/546
+     punct/markup   13.0%  resync 0.84  same-ans 0.89  harm|P 6/111
+     split          11.9%  resync 0.80  same-ans 0.95  harm|P 1/95
+     opener          3.4%  resync 0.66  same-ans 0.88  harm|P 3/29
+     digit           1.4%  resync 0.85  same-ans 1.00  harm|P 0/12
+     space/newline   1.3%  resync 0.50  same-ans 1.00  harm|P 0/11
+     A=804: resync 689 (harm 20), no-resync same-answer 108 (harm 0), no-resync changed-answer 7 (harm 7)
+     top t* token pairs (parent | child): [("'.\\n\\n'|':\\n\\n'", 41), ("'To'|'Let'", 30), ("' to'|':\\n\\n'", 23), ("' \\\\('|' '", 14), ("'.'|'.\\n'", 11), ("'Calculate'|'D'", 10)]
+Q4_K_M  |D|=1254  same answer 0.913  resync within 30 tok 0.830  median text similarity 0.78
+     word           72.7%  resync 0.83  same-ans 0.91  harm|P 34/801
+     punct/markup   10.4%  resync 0.90  same-ans 0.93  harm|P 4/116
+     split           7.8%  resync 0.84  same-ans 0.94  harm|P 3/89
+     opener          6.6%  resync 0.67  same-ans 0.89  harm|P 4/70
+     digit           1.7%  resync 1.00  same-ans 0.86  harm|P 1/19
+     space/newline   0.7%  resync 0.78  same-ans 1.00  harm|P 0/7
+     A=1102: resync 913 (harm 35), no-resync same-answer 178 (harm 0), no-resync changed-answer 11 (harm 11)
+     top t* token pairs (parent | child): [("'Let'|'To'", 76), ("':\\n\\n'|'.\\n\\n'", 19), ("' how'|' the'", 18), ("'D'|'Ident'", 16), ("'D'|'Calculate'", 14), ("' determine'|' find'", 14)]
+Q3_K_M  |D|=1312  same answer 0.891  resync within 30 tok 0.768  median text similarity 0.67
+     word           63.7%  resync 0.77  same-ans 0.88  harm|P 48/725
+     punct/markup   21.8%  resync 0.84  same-ans 0.91  harm|P 12/263
+     opener          7.1%  resync 0.46  same-ans 0.88  harm|P 6/86
+     split           5.9%  resync 0.82  same-ans 0.92  harm|P 2/67
+     digit           0.9%  resync 0.75  same-ans 0.92  harm|P 0/10
+     space/newline   0.5%  resync 0.86  same-ans 1.00  harm|P 0/6
+     A=1157: resync 890 (harm 52), no-resync same-answer 251 (harm 0), no-resync changed-answer 16 (harm 16)
+     top t* token pairs (parent | child): [("'.\\n\\n'|':\\n\\n'", 76), ("'.\\n\\n'|' to'", 72), ("':\\n\\n'|' to'", 59), ("'Let'|'To'", 48), ("'Calculate'|'D'", 39), ("'To'|'Let'", 37)]
+### predictor
+== q7_truth: sigma calibrated on first 50 questions, evaluated on the other 1269
+  Q8_0    sigma=0.051  |A|/|P| obs 0.322 pred 0.314  question-level AUC 0.832
+  Q6_K    sigma=0.175  |A|/|P| obs 0.688 pred 0.703  question-level AUC 0.796
+  Q4_K_M  sigma=0.496  |A|/|P| obs 0.946 pred 0.953  question-level AUC 0.851
+### answer margin
+== q7_truth: answer span found for 1129/1319 parent outputs; answer-margin quantiles 10/50/90%: [12.59 16.73 19.88]
+  Q8_0    flips by parent answer margin [0,0.5): harm 0/1 rep 0/1; [0.5,1): harm 0/1 rep 0/1; [1,2): harm 0/2 rep 0/2; [2,4): harm 0/4 rep 0/2; [4,8): harm 0/11 rep 0/8; [8,inf): harm 9/989 rep 5/107;  share of harms at margin<1: 0.00
+  Q6_K    flips by parent answer margin [0,0.5): harm 0/1 rep 0/1; [0.5,1): harm 0/1 rep 0/1; [1,2): harm 0/2 rep 0/2; [2,4): harm 0/4 rep 0/2; [4,8): harm 0/11 rep 1/8; [8,inf): harm 23/989 rep 14/107;  share of harms at margin<1: 0.00
+  Q4_K_M  flips by parent answer margin [0,0.5): harm 0/1 rep 0/1; [0.5,1): harm 0/1 rep 0/1; [1,2): harm 0/2 rep 0/2; [2,4): harm 0/4 rep 1/2; [4,8): harm 0/11 rep 2/8; [8,inf): harm 42/989 rep 23/107;  share of harms at margin<1: 0.00
+### certificate sims
+N=1319 slices=9 |S|=36 delta'=1.39e-03 r=0.365
+[ours] simultaneous coverage=0.9955 speedup(expected)=2.46
+   Q8_0    cand=  369 E[audits]=  119.7 cost=    163208 full=    408358 worst-slice UCB=0.097
+   Q6_K    cand=  804 E[audits]=  260.9 cost=    167935 full=    404804 worst-slice UCB=0.123
+   Q4_K_M  cand= 1102 E[audits]=  357.9 cost=    166077 full=    404583 worst-slice UCB=0.174
+   Q3_K_M  cand= 1157 E[audits]=  375.8 cost=    163159 full=    408106 worst-slice UCB=0.200
+[B1] simultaneous coverage=0.9940 speedup(expected)=3.58
+   Q8_0    cand= 1164 E[audits]=  378.2 cost=    114069 full=    408358 worst-slice UCB=0.097
+   Q6_K    cand= 1164 E[audits]=  378.2 cost=    113275 full=    404804 worst-slice UCB=0.123
+   Q4_K_M  cand= 1164 E[audits]=  378.2 cost=    113241 full=    404583 worst-slice UCB=0.174
+   Q3_K_M  cand= 1164 E[audits]=  378.2 cost=    114137 full=    408106 worst-slice UCB=0.199
+[sel] simultaneous coverage=0.9975 speedup(expected)=3.23
+   Q8_0    cand=  369 E[audits]=  119.7 cost=    163208 full=    408358 worst-slice UCB=0.097
+   Q6_K    cand= 1164 E[audits]=  378.2 cost=    113275 full=    404804 worst-slice UCB=0.124
+   Q4_K_M  cand= 1164 E[audits]=  378.2 cost=    113241 full=    404583 worst-slice UCB=0.175
+   Q3_K_M  cand= 1164 E[audits]=  378.2 cost=    114137 full=    408106 worst-slice UCB=0.199
+== ..\q7_truth r=0.365: mean worst-slice UCB at equal per-version budget (fraction of full eval)
+        0.2      0.4      0.6      0.8      1.0
+  Q8_0   harm_B1         inf    0.075    0.054    0.039    0.026
+  Q8_0   harm_ours       inf    0.100    0.026    0.026    0.026
+  Q8_0   net_B1          inf    0.089    0.061    0.046    0.023
+  Q8_0   net_ours        inf      inf    0.046    0.023    0.023
+  Q6_K   harm_B1         inf    0.101    0.075    0.058    0.044
+  Q6_K   harm_ours       inf      inf    0.076    0.044    0.044
+  Q6_K   net_B1          inf    0.107    0.074    0.052    0.023
+  Q6_K   net_ours        inf      inf    0.085    0.047    0.023

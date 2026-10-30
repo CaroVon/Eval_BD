@@ -628,7 +628,32 @@ largest decode batch that fits in memory: 3B and 7B at 80 GB fit 256 sequences (
 r = 0.37-0.47), while larger models, longer outputs or less memory force small batches, where exact
 screening gives several-fold savings.
 
+## 31. Scale: Qwen2.5-7B-Instruct truth matrix (GSM8K 1,319, fp32, eager; job 2276789)
+
+Four-layer check passes in eager mode. The job ended with exit code 6 from a Python finalization
+crash in the last engine teardown, after all outputs (5 screens, 5 margin profiles) were written.
+Decoding matches vLLM text on 1,319/1,319. Dequantization error (median): Q8_0 0.54%, Q6_K 1.80%,
+Q4_K_M 2.15%, Q3_K_M 7.22%.
+
+| Version | Child acc. | \|A\|/\|P\| (3B) | harm / repair | sigma (3B) | lemma 3 violations |
+|---|---|---|---|---|---|
+| Q8_0 | 87.7% | **0.317** (0.519) | 13 / 6 | 0.055 (0.074) | 0 |
+| Q6_K | 87.9% | **0.691** (0.902) | 27 / 23 | 0.17 (0.24) | 0 |
+| Q4_K_M | 87.5% | 0.947 (0.999) | 46 / 36 | 0.53 (0.86) | 0 |
+| Q3_K_M | 86.5% | 0.994 (1.000) | 68 / 45 | 1.0 (2.8) | 0 |
+
+Parent accuracy 88.2%. Two effects make the larger model screen better: fewer parent near-ties
+(f_m(0) = 0.078 vs 0.12 for 3B) and 25-40% smaller quantization noise per bit width. So sigma_q is
+family-independent at a given size but shrinks with scale. Margin law, sixth pair: observed /
+predicted 0.92 / 0.91 / 0.91 / 0.94 (Q8 / Q6 / Q4 / Q3). Predictor (50 questions): Q8_0 0.314 vs
+0.322 observed.
+
+Equal budget, Q8_0 (true worst-slice H / theta 0.026 / 0.023), harm certificate at b = 0.6:
+screening 0.026 (exact) vs B1 0.054 at r = 0.365; 0.045 vs 0.054 at r = 0.467 (7B, batch 256);
+at r = 0.076 the screened certificate is already exact at b = 0.4 (B1 0.075). Q6_K at r = 0.076:
+net certificate exact at b = 0.6 (0.023 vs 0.074).
+
 ## Not yet measured
 
-Qwen2.5-7B truth matrix, second parent family, remaining baselines (B2-B6),
+Batch-size curve of r (16 / 64 / 128 running), second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.

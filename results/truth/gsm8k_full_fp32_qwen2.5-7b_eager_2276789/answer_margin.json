@@ -1,0 +1,180 @@
+{
+ "bins": [
+  0,
+  0.5,
+  1,
+  2,
+  4,
+  8
+ ],
+ "versions": {
+  "Q8_0": [
+   {
+    "n": 2,
+    "n_P": 1,
+    "n_notP": 1,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 2,
+    "n_P": 1,
+    "n_notP": 1,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 4,
+    "n_P": 2,
+    "n_notP": 2,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 6,
+    "n_P": 4,
+    "n_notP": 2,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 19,
+    "n_P": 11,
+    "n_notP": 8,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 1096,
+    "n_P": 989,
+    "n_notP": 107,
+    "harm_rate": 0.00910010111223458,
+    "repair_rate": 0.04672897196261682,
+    "harm": 9,
+    "repair": 5
+   }
+  ],
+  "Q6_K": [
+   {
+    "n": 2,
+    "n_P": 1,
+    "n_notP": 1,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 2,
+    "n_P": 1,
+    "n_notP": 1,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 4,
+    "n_P": 2,
+    "n_notP": 2,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 6,
+    "n_P": 4,
+    "n_notP": 2,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 19,
+    "n_P": 11,
+    "n_notP": 8,
+    "harm_rate": 0.0,
+    "repair_rate": 0.125,
+    "harm": 0,
+    "repair": 1
+   },
+   {
+    "n": 1096,
+    "n_P": 989,
+    "n_notP": 107,
+    "harm_rate": 0.023255813953488372,
+    "repair_rate": 0.1308411214953271,
+    "harm": 23,
+    "repair": 14
+   }
+  ],
+  "Q4_K_M": [
+   {
+    "n": 2,
+    "n_P": 1,
+    "n_notP": 1,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 2,
+    "n_P": 1,
+    "n_notP": 1,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 4,
+    "n_P": 2,
+    "n_notP": 2,
+    "harm_rate": 0.0,
+    "repair_rate": 0.0,
+    "harm": 0,
+    "repair": 0
+   },
+   {
+    "n": 6,
+    "n_P": 4,
+    "n_notP": 2,
+    "harm_rate": 0.0,
+    "repair_rate": 0.5,
+    "harm": 0,
+    "repair": 1
+   },
+   {
+    "n": 19,
+    "n_P": 11,
+    "n_notP": 8,
+    "harm_rate": 0.0,
+    "repair_rate": 0.25,
+    "harm": 0,
+    "repair": 2
+   },
+   {
+    "n": 1096,
+    "n_P": 989,
+    "n_notP": 107,
+    "harm_rate": 0.042467138523761376,
+    "repair_rate": 0.21495327102803738,
+    "harm": 42,
+    "repair": 23
+   }
+  ]
+ }
+}
