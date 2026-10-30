@@ -17,7 +17,8 @@ from safetensors.torch import save_file
 from transformers import AutoModelForCausalLM
 
 COPY_FROM_REF = ["config.json", "generation_config.json", "tokenizer.json", "tokenizer_config.json",
-                 "vocab.json", "merges.txt", "LICENSE", "PINNED_REVISION.json"]
+                 "vocab.json", "merges.txt", "LICENSE", "PINNED_REVISION.json",
+                 "tokenizer.model", "special_tokens_map.json", "added_tokens.json"]
 
 
 def sha256(path, chunk=1 << 24):

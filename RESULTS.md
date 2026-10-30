@@ -226,7 +226,40 @@ cost r = 0.365, unmatched tokens decoded; no verification overhead counted):
 | Q6_K | 67% / 51% | 1.7x / 1.5x |
 | Q4_K_M | 39% / 33% | 1.3x / 1.3x |
 
+## 15. Net-degradation certificate (`src/simulate_net.py`, `docs/net_certificate.md`)
+
+theta = H - Rep is bounded by an exact upper bound on harms (theorem 4, on A) minus an exact lower
+bound on repairs (mirrored binomial inversion, on B = g \ P n D), each at delta'/2. Lemma 3 makes
+screening exact on parent-incorrect questions too.
+
+tau = 0.05, delta = 0.05, 9 slices (all + output-length and prompt-length quartiles), |S| = 36,
+1,000 reps, r = 0.365. pi floor = minimum inclusion probability on candidates (cover design
+otherwise). "cert" = probability that a version passes on all slices simultaneously.
+Coverage was >= 0.99 in every cell.
+
+| Dataset | pi floor | Q8_0 cert, harm / net | Q6_K cert, harm / net | cost harm: ours / B1 | cost net: ours / B1 |
+|---|---|---|---|---|---|
+| GSM8K (1,319) | 0.6 | 0.04 / 0.33 | 0.00 / 0.00 | 0.54 / 0.48 | 0.68 / 0.60 |
+| GSM8K (1,319) | 0.8 | 0.52 / 1.00 | 0.00 / 0.15 | 0.67 / 0.63 | 0.85 / 0.80 |
+| GSM8K (1,319) | 0.9 | 1.00 / 1.00 | 0.00 / 0.99 | 0.73 / 0.71 | 0.93 / 0.90 |
+| GSM8K (1,319) | 0.99 | 1.00 / 1.00 | 0.00 / 1.00 | 0.79 / 0.78 | 1.00 / 0.99 |
+| MMLU-Pro (1,000) | 0.8 | 0.00 / 0.00 | 0.00 / 0.00 | 0.38 / 0.32 | 0.94 / 0.80 |
+| MMLU-Pro (1,000) | 0.9 | 0.00 / 0.32 | 0.00 / 0.05 | 0.41 / 0.36 | 1.03 / 0.90 |
+| MMLU-Pro (1,000) | 0.95 | 0.00 / 0.97 | 0.00 / 0.30 | 0.43 / 0.38 | 1.07 / 0.95 |
+| MMLU-Pro (1,000) | 0.99 | 0.00 / 1.00 | 0.00 / 1.00 | 0.45 / 0.40 | 1.11 / 0.99 |
+
+Costs are total audit cost over the 4 versions / full evaluation of the 4 versions. Worst-slice
+true (theta, H): GSM8K Q8_0 (0.012, 0.029), Q6_K (0.021, 0.063); MMLU-Pro Q8_0 (0.020, 0.084),
+Q6_K (0.028, 0.120).
+
+- The net certificate is the only way to certify GSM8K Q6_K and MMLU-Pro Q8_0 / Q6_K at tau = 0.05:
+  their worst-slice harm rate exceeds tau while theta does not.
+- It needs inclusion probabilities of 0.9-0.99, i.e. close to full-evaluation cost. In that regime
+  exact screening (ours) costs slightly more than B1, because screening all questions is a fixed
+  cost and Q4_K_M / Q3_K_M gain nothing from it.
+- The zero-harm cover design (pi about 0.33 here) certifies nothing: every version has real flips.
+
 ## Not yet measured
 
-Net-degradation certificate, MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
+MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.

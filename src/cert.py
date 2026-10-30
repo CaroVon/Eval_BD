@@ -22,6 +22,24 @@ def tu_table(n, pi, delta):
     return ok.sum(axis=0) - 1
 
 
+def tl_table(n, pi_max, delta):
+    """Exact lower bound T_L(k) = min{t in 0..n : P(Bin(t, pi_max) >= k) > delta}, k = 0..n.
+
+    Mirror of theorem 4 for a count T observed through K = sum R_i F_i with inclusion
+    probabilities <= pi_max: K is stochastically dominated by Bin(T, pi_max), so
+    P(T < T_L(K)) <= delta for every configuration.
+    """
+    if n == 0:
+        return np.zeros(1, dtype=int)
+    if pi_max >= 1.0:
+        return np.arange(n + 1)
+    t = np.arange(n + 1)[:, None]
+    k = np.arange(n + 1)[None, :]
+    ok = binom.sf(k - 1, t, pi_max) > delta  # P(Bin(t, pi) >= k), non-decreasing in t
+    first = np.where(ok.any(axis=0), ok.argmax(axis=0), n)
+    return first
+
+
 def pi_star(n_g, tau, delta_prime):
     """Proposition 10: inclusion probability that makes slice g exactly tau-precise at zero harm."""
     k = math.ceil(tau * n_g)

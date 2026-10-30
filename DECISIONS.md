@@ -56,3 +56,14 @@ since D and t\* are fixed under determinism. Both reduce screening cost without 
 certificate; `src/simulate_cert.py --scope P --lazy 1` accounts for them. The current screening
 job still prefills the full parent output for all questions (needed to verify lemma 3); a
 production screen would implement the chunked early stop.
+
+## D8 (2026-10-30) Exploratory second parent: microsoft/Phi-3.5-mini-instruct @ 2fe1924
+Chosen only to test whether the margin scaling law (RESULTS.md sec. 13) holds for a different
+family: MIT license, not gated, 3.8B, phi3 architecture supported by llama.cpp, transformers GGUF
+loading and vLLM. This is not the plan's final choice of second/third parent, which is still to be
+made after G1. Same ladder, no imatrix, fp32 execution, A100 only.
+
+## D9 (2026-10-30) Net-degradation certificate kept as an extension
+`docs/net_certificate.md`. It certifies theta = H - Rep instead of the harm rate H; it is valid
+for any configuration and reduces to the plan's certificate when B is not audited. Reported
+alongside the harm certificate, not as a replacement, until its design and lower bound are worked out.
