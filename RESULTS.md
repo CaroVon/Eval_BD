@@ -653,7 +653,23 @@ screening 0.026 (exact) vs B1 0.054 at r = 0.365; 0.045 vs 0.054 at r = 0.467 (7
 at r = 0.076 the screened certificate is already exact at b = 0.4 (B1 0.075). Q6_K at r = 0.076:
 net certificate exact at b = 0.6 (0.023 vs 0.074).
 
+## 32. Cost ratio vs decode batch (Qwen2.5-3B Q8_0, fp32, A100; jobs 2276900, 2277108, 2277109)
+
+Same 1,319 prefill sequences and decodes; only max_num_seqs changes.
+
+| max_num_seqs | decode time | decode s/token | prefill (top-2) time | r |
+|---|---|---|---|---|
+| 32 | 437.8 s | 11.8e-4 | 45.9 s | 0.076 |
+| 64 | 235.9 s | 6.38e-4 | 45.4 s | 0.140 |
+| 128 | 122.8 s | 3.32e-4 | 45.6 s | 0.269 |
+| 256 | 90.5 s | 2.45e-4 | 45.6 s | 0.365 |
+
+Decode time halves with each doubling of the batch up to 128 (bandwidth-bound) and improves only
+26% from 128 to 256 (approaching compute-bound); prefill time does not depend on the decode batch.
+Up to 128 sequences, r is roughly proportional to the batch (about 0.0021 per sequence). The batch
+16 point is still running.
+
 ## Not yet measured
 
-Batch-size curve of r (16 / 64 / 128 running), second parent family, remaining baselines (B2-B6),
+Batch 16 cost point, second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.
