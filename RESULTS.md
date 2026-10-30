@@ -471,7 +471,32 @@ and the exact theta at b = 0.8. For Q6_K the two are close (net, b = 0.8: 0.045 
 Predictor (sec. 17) with 50 calibration questions: Q8_0 overestimates (0.553 vs 0.414; few
 divergences in 50 questions), Q6_K 0.796 vs 0.783, Q4_K_M 0.975 vs 0.976.
 
+## 25. MMLU-Pro 3,000 (14 categories x about 214), Qwen2.5-3B, fp32, A100 (job 2276120)
+
+| Version | Child acc. | \|A\|/\|P\| (pilot 1,000) | harm / repair | lemma 3 violations | flips outside D | questions with ties |
+|---|---|---|---|---|---|---|
+| Q8_0 | 44.8% | **0.766** (0.756) | 138 / 160 | 0 | 0 | 0 |
+| Q6_K | 44.3% | 0.975 (0.980) | 241 / 246 | 0 | 0 | 1 |
+| Q4_K_M | 42.1% | 1.000 | 324 / 263 | 0 | 0 | 0 |
+| Q3_K_M | 23.7% | 1.000 | 832 / 221 | 0 | 0 | 2 |
+
+Parent accuracy 44.1%, |P| = 1,323. The pilot numbers replicate; Qwen's high-bit flips are
+symmetric or slightly repair-heavy here.
+
+Certificates with all + length/prompt quartiles + 14 category slices (23 slices, m = 100,
+|S| = 92), tau = 0.05, r = 0.365:
+
+| | ours | sel | B1 |
+|---|---|---|---|
+| speedup over full evaluation of the ladder | 3.76 | 4.74 | 5.10 |
+| simultaneous coverage | 0.971 | 0.975 | 0.979 |
+| Q8_0 worst-slice UCB (cover design) | 0.171 | 0.171 | 0.173 |
+
+True worst-slice theta / H: Q8_0 0.028 / 0.079, Q6_K 0.033 / 0.112. With an inclusion floor of
+0.95 the net certificate passes Q8_0 on all 23 slices in 37% of reps (harm certificate: never);
+cost 1.08 (ours) vs 0.95 (B1) of full evaluation.
+
 ## Not yet measured
 
-MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
+Phi-3.5 on MMLU-Pro, SmolLM2 (third family), second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.

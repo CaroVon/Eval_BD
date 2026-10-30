@@ -87,3 +87,10 @@ for d in $O/truth/gsm8k_full_fp32_phi-3.5-mini*; do
   cp $d/divergence_classes.json $d/answer_margin.json $d/sim_*.json $d/eq_budget_*.json $R/truth/$b/ 2>/dev/null || true
   cp $d/margins/predict_D_*.json $R/truth/$b/ 2>/dev/null || true
 done
+# MMLU-Pro 3000 (Qwen)
+T=$O/truth/mmlupro_3000_fp32_qwen2.5-3b_2276120
+if [ -d $T/screen ]; then
+  mkdir -p $R/truth/mmlupro_3000_fp32
+  for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do cp $T/screen/$m/summary.json $R/truth/mmlupro_3000_fp32/summary_$m.json 2>/dev/null || true; done
+  cp $T/sim_*.json $T/net_*.json $R/truth/mmlupro_3000_fp32/ 2>/dev/null || true
+fi
