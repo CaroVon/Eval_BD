@@ -559,6 +559,26 @@ Flip symmetry depends on the task, not only the model: the same Phi Q8_0 is harm
 (30/13) and even on MMLU-Pro (40/44). On MMLU-Pro, exact screening is again never better at
 equal budget (Q8_0 net at b = 0.8: 0.088 vs 0.066 for B1), as for Qwen.
 
+## 28. Robustness of the margin law (`src/law_robustness.py`)
+
+ratio = observed rho / (f_m(0) sigma / sqrt(2 pi)); sigma = sd of d over positions with parent
+margin < 4; f_m(0) = share of parent margins below w, divided by w. 95% bootstrap intervals
+over questions (200 resamples). Values for w = 0.1:
+
+| Parent / dataset | Q8_0 | Q6_K | Q4_K_M | Q3_K_M |
+|---|---|---|---|---|
+| Qwen2.5-3B / GSM8K | 0.81 [0.77, 0.85] | 0.88 [0.85, 0.91] | 0.74 [0.71, 0.76] | 1.12 [1.08, 1.15] |
+| Qwen2.5-3B / MMLU-Pro | 0.89 [0.85, 0.93] | 0.91 [0.89, 0.93] | 0.83 [0.81, 0.85] | 1.05 [1.02, 1.08] |
+| Phi-3.5-mini / GSM8K | 0.91 [0.86, 0.97] | 0.94 [0.90, 0.99] | 0.80 [0.77, 0.84] | 0.90 [0.86, 0.93] |
+| Phi-3.5-mini / MMLU-Pro | 0.83 [0.79, 0.87] | 0.90 [0.87, 0.93] | 0.81 [0.79, 0.83] | 0.87 [0.85, 0.90] |
+| SmolLM2-1.7B / GSM8K | 0.94 [0.89, 0.98] | 0.92 [0.89, 0.95] | 0.98 [0.95, 1.02] | 1.06 [1.03, 1.09] |
+
+All 20 ratios lie in 0.72-1.14 (median about 0.90). The window w (0.05, 0.1, 0.2) changes them by
+at most 0.03. The intervals are narrow and most ratios are below 1, so the Gaussian law
+over-predicts by about 10% systematically (most for Q4_K_M), consistent with a lighter-than-Gaussian
+perturbation tail near zero margin. As a first-order description, rho ~ c f_m(0) sigma / sqrt(2 pi)
+with c ~ 0.9.
+
 ## Not yet measured
 
 Qwen2.5-7B (scale), second parent family, remaining baselines (B2-B6),
