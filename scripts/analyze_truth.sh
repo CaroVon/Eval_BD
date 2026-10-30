@@ -5,6 +5,8 @@ cd "$(dirname "$0")"
 PY="/c/Users/ZYF/anaconda3/python -X utf8"
 T=${1:-phi_truth}
 TOK=${2:-phi_tokenizer.json}
+TEST=${3:-full_truth/test.jsonl}
+TASK=${4:-gsm8k}
 echo "### decode check"
 $PY - $TOK $T <<'EOF'
 import json, sys
@@ -17,9 +19,9 @@ print(f'decode matches vLLM text: {ok}/{len(G)}')
 EOF
 echo "### hazard model + cascade"; $PY src/diagnose.py $T $TOK 2>&1 | grep -v "top t\*=0" || true
 echo "### margins"; [ -f $T/margins/margins_Q4_K_M.npz ] && $PY src/analyze_margins.py $T $TOK
-echo "### divergence classes"; $PY src/classify_divergence.py $T $TOK full_truth/test.jsonl
+echo "### divergence classes"; $PY src/classify_divergence.py $T $TOK $TEST
 echo "### predictor"; [ -f $T/margins/margins_Q4_K_M.npz ] && $PY src/predict_D.py $T 50
-echo "### answer margin"; [ -f $T/margins/margins_parent.npz ] && $PY src/answer_margin.py $T $TOK gsm8k
+echo "### answer margin"; [ -f $T/margins/margins_parent.npz ] && $PY src/answer_margin.py $T $TOK $TASK
 echo "### certificate sims"
 $PY src/simulate_cert.py --truth $T --tau 0.05 --nbins 4 --m 100 --prefill-ratio 0.365 --reps 2000 --scope P --lazy 1 --out $T/sim_t05_q4_r0.365.json | tail -16
 (cd src && $PY eq_budget.py ../$T 0.365)

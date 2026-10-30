@@ -532,7 +532,34 @@ Equal budget, SmolLM2 Q8_0 (true worst-slice H / theta 0.052 / 0.003): net certi
 screening 0.009 at b = 0.8 vs 0.040 for B1 (about 4.4x tighter); harm certificates saturate at H
 by b = 0.4 for both. Q6_K: screening never better.
 
+## 27. Phi-3.5-mini on MMLU-Pro pilot (1,000), fp32, eager (job 2276607)
+
+| Version | Child acc. | \|A\|/\|P\| (Qwen) | harm / repair | lemma 3 violations | flips outside D |
+|---|---|---|---|---|---|
+| Q8_0 | 52.0% | **0.628** (0.756) | 40 / 44 | 0 | 0 |
+| Q6_K | 50.4% | 0.919 (0.980) | 83 / 71 | 0 | 0 |
+| Q4_K_M | 48.8% | 0.990 (1.000) | 110 / 82 | 0 | 0 |
+| Q3_K_M | 44.8% | 0.996 (1.000) | 141 / 73 | 0 | 0 |
+
+Parent accuracy 51.6%. Decoding matches vLLM text on 1,000/1,000.
+
+Margin law, fifth parent x task pair: f_m(0) = 0.164, predicted rho/sigma 0.065, observed
+0.058 / 0.063 / 0.055 / 0.059 (Q8 / Q6 / Q4 / Q3); sigma 0.073 / 0.24 / 0.75 / 1.1.
+Predictor (50 calibration questions): Q8_0 0.674 vs 0.634, Q6_K 0.928 vs 0.920.
+
+| Parent / dataset | f_m(0) | predicted rho/sigma | observed rho/sigma, Q8 / Q6 / Q4 / Q3 |
+|---|---|---|---|
+| Qwen2.5-3B / GSM8K | 0.12 | 0.048 | 0.040 / 0.044 / 0.037 / - |
+| Qwen2.5-3B / MMLU-Pro | 0.19 | 0.077 | 0.071 / 0.074 / 0.068 / - |
+| Phi-3.5-mini / GSM8K | 0.07 | 0.028 | 0.027 / 0.027 / 0.023 / 0.026 |
+| Phi-3.5-mini / MMLU-Pro | 0.164 | 0.065 | 0.058 / 0.063 / 0.055 / 0.059 |
+| SmolLM2-1.7B / GSM8K | 0.124 | 0.049 | 0.047 / 0.048 / 0.050 / 0.053 |
+
+Flip symmetry depends on the task, not only the model: the same Phi Q8_0 is harm-heavy on GSM8K
+(30/13) and even on MMLU-Pro (40/44). On MMLU-Pro, exact screening is again never better at
+equal budget (Q8_0 net at b = 0.8: 0.088 vs 0.066 for B1), as for Qwen.
+
 ## Not yet measured
 
-Phi-3.5 on MMLU-Pro, second parent family, remaining baselines (B2-B6),
+Qwen2.5-7B (scale), second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.

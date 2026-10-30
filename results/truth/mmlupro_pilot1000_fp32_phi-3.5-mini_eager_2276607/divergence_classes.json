@@ -1,0 +1,78 @@
+{
+ "Q8_0": {
+  "n_D": 675,
+  "classes": {
+   "word": 519,
+   "split": 27,
+   "punct/markup": 78,
+   "digit": 27,
+   "opener": 14,
+   "space/newline": 10
+  },
+  "same_answer": 0.7659259259259259,
+  "resync": 0.7303703703703703,
+  "A": 324,
+  "A_resync": 241,
+  "A_resync_harm": 27,
+  "A_nores_same": 70,
+  "A_nores_changed": 13,
+  "A_harm": 40
+ },
+ "Q6_K": {
+  "n_D": 938,
+  "classes": {
+   "word": 668,
+   "digit": 16,
+   "opener": 91,
+   "punct/markup": 109,
+   "space/newline": 25,
+   "split": 29
+  },
+  "same_answer": 0.6865671641791045,
+  "resync": 0.6695095948827292,
+  "A": 474,
+  "A_resync": 325,
+  "A_resync_harm": 47,
+  "A_nores_same": 113,
+  "A_nores_changed": 36,
+  "A_harm": 83
+ },
+ "Q4_K_M": {
+  "n_D": 993,
+  "classes": {
+   "punct/markup": 85,
+   "word": 536,
+   "opener": 340,
+   "split": 24,
+   "space/newline": 3,
+   "digit": 5
+  },
+  "same_answer": 0.6233635448136958,
+  "resync": 0.5297079556898288,
+  "A": 511,
+  "A_resync": 277,
+  "A_resync_harm": 42,
+  "A_nores_same": 166,
+  "A_nores_changed": 68,
+  "A_harm": 110
+ },
+ "Q3_K_M": {
+  "n_D": 998,
+  "classes": {
+   "word": 580,
+   "punct/markup": 66,
+   "opener": 325,
+   "split": 21,
+   "digit": 4,
+   "space/newline": 2
+  },
+  "same_answer": 0.5841683366733467,
+  "resync": 0.46893787575150303,
+  "A": 514,
+  "A_resync": 251,
+  "A_resync_harm": 61,
+  "A_nores_same": 183,
+  "A_nores_changed": 80,
+  "A_harm": 141
+ }
+}
