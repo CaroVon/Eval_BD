@@ -293,6 +293,22 @@ parent margins for the remaining questions. Prediction information only (design,
 Fifty child questions plus the parent margins predict |A|/|P| within +0.04 to +0.06, always on
 the conservative side; results are stable for n_cal = 100 and 200.
 
+## 18. Flips vs the parent's confidence in its own answer (`src/answer_margin.py`)
+
+Parent answer margin = minimum parent margin over the answer tokens (digits after the last
+"####", or the letter after the last "answer is ("), measured along the parent's own trajectory.
+
+| | answer found | answer margin 10 / 50 / 90% | share of harm flips at answer margin < 1 |
+|---|---|---|---|
+| GSM8K | 1,156 / 1,319 | 2.6 / 17.4 / 20.5 | Q8_0 0%, Q6_K 2%, Q4_K_M 2% |
+| MMLU-Pro | 918 / 1,000 | 1.4 / 8.4 / 14.3 | Q8_0 10%, Q6_K 10%, Q4_K_M 5% |
+
+GSM8K Q8_0: all 15 located harm flips have answer margin >= 8 (harm rate 15/820 there, 0/27 below
+0.5). Flips are not answer-token near-ties: at the answer position the parent is confident given
+its own reasoning, and the child flips because an earlier wording divergence sent it down a
+different reasoning path. Answer-position confidence therefore does not predict CoT flips, unlike
+decision-margin predictors for single-step decisions.
+
 ## Not yet measured
 
 Chunk verification cost, MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
