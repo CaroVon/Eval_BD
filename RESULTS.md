@@ -104,7 +104,47 @@ Structure pays off only at high audit rates (fine-grained simultaneous certifica
 break-even point is set by the prefill/decode cost ratio r. Worst-slice certificates are the same
 for both methods at equal pi; the difference is cost only.
 
+## 9. Prefill vs decode cost, same 1,319 questions on two GPUs (fp32 Q8_0, top-2)
+
+| GPU | decode | prefill (top-2) | per-token r | bare prefill r |
+|---|---|---|---|---|
+| A100 80GB PCIe | 90.5 s / 369,637 tok | 45.6 s / 509,901 tok | **0.365** | 0.308 |
+| H100 NVL (cost only, not truth data) | 51.6 s | 20.6 s | **0.290** | 0.240 |
+
+Top-20 logprobs cost 68.5 s (A100) and 72.7 s (H100); top-1/top-2 cost about 17% over bare.
+
+## 10. MMLU-Pro pilot (1,000 questions, 14 categories x 71-72), fp32, A100
+
+Parent output length: mean 466, median 407 tokens (GSM8K: 287); 72 outputs (7.2%) hit Lmax = 1024.
+
+| Version | Child acc. | \|A\|/\|P\| | median t\* | harm / repair flips | lemma 3 violations | ties |
+|---|---|---|---|---|---|---|
+| parent | 44.6% | 0 | - | - | 0 | 0 |
+| Q8_0 | 43.9% | **0.756** | 88 | 53 / 46 | 0 | 0 |
+| Q6_K | 44.5% | 0.980 | 34 | 84 / 83 | 0 | 0 |
+| Q4_K_M | 43.0% | 1.000 | 15 | 102 / 86 | 0 | 0 |
+| Q3_K_M | 23.9% | 1.000 | 1 | 279 / 72 | 0 | 0 |
+
+|P| = 446.
+
+## 11. Certificate simulation with measured r (scope P, lazy, 2,000 reps)
+
+Files: `results/truth/*/sim_<setting>_r<r>.json`. "ours/B1" is the expected Q8_0 audit cost ratio
+(< 1 means exact screening is cheaper). Speedups are over full evaluation of all four versions.
+
+| Dataset, setting | slices | mean pi | speedup ours / sel / B1 (A100) | Q8_0 ours/B1 A100 | H100 | coverage | worst-slice UCB Q8_0 |
+|---|---|---|---|---|---|---|---|
+| GSM8K, tau .05, quartiles | 9 | 0.33 | 2.72 / 3.48 / 3.89 | 1.47 | 1.26 | 0.984 | 0.102 |
+| GSM8K, tau .05, octiles | 17 | 0.58 | 1.91 / 2.19 / 2.20 | 1.01 | 0.88 | 0.989 | 0.121 |
+| GSM8K, tau .02, octiles | 17 | 0.84 | 1.45 / 1.58 / 1.51 | 0.83 | 0.73 | 0.973 | 0.078 |
+| MMLU-Pro, tau .05, quartiles | 9 | 0.40 | 4.24 / 5.58 / 6.21 | 1.43 | 1.27 | 0.982 | 0.182 |
+| MMLU-Pro, tau .05, quartiles + categories (m = 50) | 23 | 0.85 | 2.53 / 2.90 / 2.91 | 1.01 | 0.93 | 0.975 | 0.203 |
+| MMLU-Pro, tau .10, quartiles + categories (m = 50) | 23 | 0.61 | 3.21 / 3.89 / 4.05 | 1.16 | 1.05 | 0.988 | 0.278 |
+
+No version is certified below tau in any setting: Q8_0 has real harm flips, so the worst-slice
+upper bound stays above tau (0.10 on GSM8K, about 0.2 on MMLU-Pro at tau = 0.05).
+
 ## Not yet measured
 
-MMLU-Pro, prefill cost on H100, cascade drafts, remaining baselines (B2-B6), track B,
-perplexity check of the dequantized models.
+Cascade drafts, parent margin profiles, remaining baselines (B2-B6), track B, perplexity check
+of the dequantized models.

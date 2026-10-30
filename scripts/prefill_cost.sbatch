@@ -5,19 +5,24 @@
 #SBATCH --constraint=a100
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=96G
-#SBATCH --time=01:00:00
+#SBATCH --time=01:30:00
 #SBATCH --requeue
 #SBATCH --output=/net/spaces/jevans/klab/caroyf/logs/ICML/%x_%j.out
 
+# Prefill vs decode cost for the fp32 Q8_0 child. GPU type can be overridden on the sbatch
+# command line (--gres/--constraint); this is a cost measurement only, not truth-matrix data.
+# Env: IDS (default: full GSM8K test), PARENT_GEN (default: full-GSM8K fp32 parent outputs).
 set -euo pipefail
 K=/net/spaces/jevans/klab/caroyf
 export HF_HOME=$K/data/ICML/hf_cache
 export VLLM_BATCH_INVARIANT=1
 DATA=$K/data/ICML/datasets/gsm8k
-nvidia-smi --query-gpu=name,driver_version,uuid --format=csv
+IDS=${IDS:-$DATA/all_test_ids.json}
+PARENT_GEN=${PARENT_GEN:-$K/outputs/ICML/truth/gsm8k_full_fp32_qwen2.5-3b_2273994/parent_gen/gen_A.jsonl}
+GPU=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1 | tr ' ' '_')
+nvidia-smi --query-gpu=name,driver_version,compute_cap,uuid --format=csv
 set +u; source ~/myproject/ICML/scripts/stage_env.sh qc-vllm; set -u
 cd ~/myproject/ICML/src
 python prefill_cost.py --model $K/data/ICML/models/dequant_fp32/qwen2.5-3b-instruct-Q8_0 \
-  --parent-gen $K/outputs/ICML/detcheck/qwen2.5-3b_fp32_2273534/gen_A.jsonl \
-  --data-dir $DATA --ids $DATA/determinism_subset_ids.json \
-  --out $K/outputs/ICML/cost/prefill_cost_fp32_Q8_0_${SLURM_JOB_ID}.json
+  --parent-gen "$PARENT_GEN" --data-dir $DATA --ids "$IDS" \
+  --out $K/outputs/ICML/cost/prefill_cost_fp32_Q8_0_n$(python -c "import json;print(len(json.load(open('$IDS'))))")_${GPU}_${SLURM_JOB_ID}.json

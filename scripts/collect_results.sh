@@ -33,7 +33,13 @@ mkdir -p $R/truth/gsm8k_full_fp32
 for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do
   cp $T/screen/$m/summary.json $R/truth/gsm8k_full_fp32/summary_$m.json
 done
-cp $T/sim_r*.json $R/truth/gsm8k_full_fp32/ 2>/dev/null || true
+cp $T/sim_*.json $R/truth/gsm8k_full_fp32/ 2>/dev/null || true
+T=$O/truth/mmlupro_pilot1000_fp32_qwen2.5-3b_2274801
+mkdir -p $R/truth/mmlupro_pilot1000_fp32
+for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do
+  cp $T/screen/$m/summary.json $R/truth/mmlupro_pilot1000_fp32/summary_$m.json
+done
+cp $T/sim_*.json $R/truth/mmlupro_pilot1000_fp32/ 2>/dev/null || true
 mkdir -p $R/cost
 cp $O/cost/*.json $R/cost/ 2>/dev/null || true
 mkdir -p $R/data/mmlu_pro
