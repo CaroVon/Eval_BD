@@ -345,7 +345,30 @@ Exact screening pays off only when three things hold together: a high bit-width 
 fine-grained simultaneous certification (slices of about 100-300 or tau <= 0.02), and a low
 prefill/decode cost ratio r.
 
+## 21. Measured cost of short verification chunks (`src/chunk_cost.py`, A100, fp32 Q8_0)
+
+Cost only, prefix caching on (never used for truth data). 512 GSM8K questions; each request
+extends a fully cached prefix by L tokens; per-token time over decode per-token time:
+
+| L | 1 | 2 | 4 | 8 | 16 | 32 | 64 |
+|---|---|---|---|---|---|---|---|
+| r(L) | 2.01 | 1.19 | 0.83 | 0.58 | 0.48 | 0.42 | 0.40 |
+
+Short chunks are far more expensive per token than a long prefill (0.365): the fixed cost of a
+forward pass is not amortised. Replaying the re-anchored verifier (sec. 16, n = 4) with r(L):
+
+| Version | GSM8K L=4 / 8 / 16 / 32 | MMLU-Pro L=4 / 8 / 16 / 32 |
+|---|---|---|
+| Q8_0 | 1.11 / 1.43 / **1.52** / 1.39x | 1.05 / **1.25** / 1.23 / 1.04x |
+| Q6_K | 1.01 / **1.15** / 1.08 / 0.88x | 0.96 / **1.03** / 0.93 / 0.73x |
+| Q4_K_M | 0.91 / 0.93 / 0.81 / 0.62x | 0.92 / 0.93 / 0.82 / 0.63x |
+
+Exact full evaluation by re-anchored verification therefore gains at most about 1.5x (Q8_0,
+GSM8K) and nothing below Q6_K. These chunk costs come from separate lock-step generate calls; an
+engine that mixes verification and decoding in one batch could do better, so treat them as
+conservative.
+
 ## Not yet measured
 
-Chunk verification cost, MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
+MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.
