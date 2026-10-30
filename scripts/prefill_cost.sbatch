@@ -19,10 +19,12 @@ export VLLM_BATCH_INVARIANT=1
 DATA=$K/data/ICML/datasets/gsm8k
 IDS=${IDS:-$DATA/all_test_ids.json}
 PARENT_GEN=${PARENT_GEN:-$K/outputs/ICML/truth/gsm8k_full_fp32_qwen2.5-3b_2273994/parent_gen/gen_A.jsonl}
+MODEL=${MODEL:-$K/data/ICML/models/dequant_fp32/qwen2.5-3b-instruct-Q8_0}
+MTAG=${MTAG:-fp32_Q8_0}
 GPU=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1 | tr ' ' '_')
 nvidia-smi --query-gpu=name,driver_version,compute_cap,uuid --format=csv
 set +u; source ~/myproject/ICML/scripts/stage_env.sh qc-vllm; set -u
 cd ~/myproject/ICML/src
-python prefill_cost.py --model $K/data/ICML/models/dequant_fp32/qwen2.5-3b-instruct-Q8_0 \
+python prefill_cost.py --model "$MODEL" \
   --parent-gen "$PARENT_GEN" --data-dir $DATA --ids "$IDS" \
-  --out $K/outputs/ICML/cost/prefill_cost_fp32_Q8_0_n$(python -c "import json;print(len(json.load(open('$IDS'))))")_${GPU}_${SLURM_JOB_ID}.json
+  --out $K/outputs/ICML/cost/prefill_cost_${MTAG}_n$(python -c "import json;print(len(json.load(open('$IDS'))))")_${GPU}_${SLURM_JOB_ID}.json

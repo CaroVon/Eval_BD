@@ -73,3 +73,9 @@ Phi-3.5-mini fails the four-layer check in compiled mode (5/200 questions differ
 processes) and passes with `--enforce-eager`. Qwen2.5-3B passes in compiled mode (three separate
 checks). Rule: every parent gets its own four-layer check in the exact mode used for its truth
 matrix, and the mode (compiled / eager) is part of the recorded execution configuration.
+
+## D11 (2026-10-30) More exploratory parents for the margin law
+HuggingFaceTB/SmolLM2-1.7B-Instruct @ 31b70e2 (Apache-2.0, llama architecture) as a third family,
+and Qwen/Qwen2.5-7B-Instruct @ a09a354 (Apache-2.0) to test model scale within the Qwen family and
+the prefill/decode cost ratio at 7B. Both run in eager mode after their own four-layer check
+(D10). Like D8, these are not the plan's final parent choices.
