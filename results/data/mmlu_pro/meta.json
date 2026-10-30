@@ -1,0 +1,28 @@
+{
+ "repo": "TIGER-Lab/MMLU-Pro",
+ "split": "test",
+ "revision": "b189ec765aa7ed75c8acfea42df31fdae71f97be",
+ "n": 12032,
+ "seed": 20261030,
+ "categories": {
+  "biology": 717,
+  "business": 789,
+  "chemistry": 1132,
+  "computer science": 410,
+  "economics": 844,
+  "engineering": 969,
+  "health": 818,
+  "history": 381,
+  "law": 1101,
+  "math": 1351,
+  "other": 924,
+  "philosophy": 499,
+  "physics": 1299,
+  "psychology": 798
+ },
+ "allocation": "equal per category; pilot nested in subset_3000",
+ "subset_sizes": {
+  "subset_3000": 3000,
+  "pilot_1000": 1000
+ }
+}

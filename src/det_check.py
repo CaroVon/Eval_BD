@@ -21,7 +21,7 @@ from transformers import AutoTokenizer  # noqa: E402
 from vllm import LLM, SamplingParams  # noqa: E402
 from vllm.inputs import TokensPrompt  # noqa: E402
 
-PROMPT_SUFFIX = "\nPlease reason step by step, and put your final answer after '####'."
+from tasks import user_content  # noqa: E402
 
 
 def load_questions(data_dir, ids_file):
@@ -34,8 +34,8 @@ def load_questions(data_dir, ids_file):
     return [rows[i] for i in ids]
 
 
-def build_prompt_ids(tok, question):
-    msgs = [{"role": "user", "content": question + PROMPT_SUFFIX}]
+def build_prompt_ids(tok, rec):
+    msgs = [{"role": "user", "content": user_content(rec)}]
     enc = tok.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True)
     # Newer transformers return a BatchEncoding here rather than a list of ids.
     ids = enc["input_ids"] if hasattr(enc, "keys") else enc
@@ -158,7 +158,7 @@ def main():
     if args.limit:
         qs = qs[:args.limit]
     tok = AutoTokenizer.from_pretrained(args.model)
-    prompts = [build_prompt_ids(tok, q["question"]) for q in qs]
+    prompts = [build_prompt_ids(tok, q) for q in qs]
 
     llm = LLM(model=args.model, dtype=args.dtype, seed=0,
               enable_prefix_caching=False, async_scheduling=False,

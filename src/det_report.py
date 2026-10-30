@@ -1,8 +1,9 @@
 """Summarize the four-layer determinism check written by det_check.py."""
 import json
-import re
 import sys
 from pathlib import Path
+
+from tasks import answer, grade
 
 
 def read_jsonl(path):
@@ -10,42 +11,30 @@ def read_jsonl(path):
         return [json.loads(l) for l in f]
 
 
-def extract(text):
-    m = re.search(r"####\s*\$?\s*(-?[\d,]*\.?\d+)", text)
-    if not m:
-        nums = re.findall(r"-?[\d,]*\.?\d+", text)
-        if not nums:
-            return None
-        s = nums[-1]
-    else:
-        s = m.group(1)
-    return s.replace(",", "").rstrip(".")
-
-
-def compare_gen(a, b):
+def compare_gen(a, b, recs):
     diff = [i for i in range(len(a)) if a[i]["out_ids"] != b[i]["out_ids"]]
-    score = [i for i in diff if extract(a[i]["text"]) != extract(b[i]["text"])]
+    score = [i for i in diff if answer(a[i]["text"], recs.get(a[i]["id"], {})) != answer(b[i]["text"], recs.get(b[i]["id"], {}))]
     return {"n": len(a), "token_seq_diff": len(diff), "answer_diff": len(score),
             "diff_ids": [a[i]["id"] for i in diff][:20]}
 
 
 def main(out_dir):
     d = Path(out_dir)
-    gold = {}
+    recs = {}
     data = Path(sys.argv[2]) if len(sys.argv) > 2 else None
     if data:
         for r in read_jsonl(data / "test.jsonl"):
-            gold[r["id"]] = r["gold"]
+            recs[r["id"]] = r
     A = read_jsonl(d / "gen_A.jsonl")
     rep = {}
-    if gold:
-        rep["accuracy_A"] = sum(extract(r["text"]) == gold[r["id"]] for r in A) / len(A)
+    if recs:
+        rep["accuracy_A"] = sum(grade(r["text"], recs[r["id"]]) for r in A) / len(A)
     rep["hit_max_tokens_A"] = sum(r["finish"] == "length" for r in A)
     rep["mean_out_tokens_A"] = sum(len(r["out_ids"]) for r in A) / len(A)
 
     # Layer 1: same config, repeated run
     if (d / "gen_B.jsonl").exists():
-        rep["L1_repeat_A_vs_B"] = compare_gen(A, read_jsonl(d / "gen_B.jsonl"))
+        rep["L1_repeat_A_vs_B"] = compare_gen(A, read_jsonl(d / "gen_B.jsonl"), recs)
 
     # Layer 2: prefill top-1 vs decoded token
     p = read_jsonl(d / "prefill_vs_A.jsonl")
@@ -68,7 +57,7 @@ def main(out_dir):
     for tag in ("C",):
         f = d / f"gen_{tag}.jsonl"
         if f.exists():
-            rep[f"L4_batch_A_vs_{tag}"] = compare_gen(A, read_jsonl(f))
+            rep[f"L4_batch_A_vs_{tag}"] = compare_gen(A, read_jsonl(f), recs)
 
     verdict = all([
         rep.get("L1_repeat_A_vs_B", {}).get("token_seq_diff", 1) == 0,

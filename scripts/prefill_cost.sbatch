@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH --job-name=prefill_cost
+#SBATCH --partition=general
+#SBATCH --gres=gpu:a100:1,local:60G
+#SBATCH --constraint=a100
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=96G
+#SBATCH --time=01:00:00
+#SBATCH --requeue
+#SBATCH --output=/net/spaces/jevans/klab/caroyf/logs/ICML/%x_%j.out
+
+set -euo pipefail
+K=/net/spaces/jevans/klab/caroyf
+export HF_HOME=$K/data/ICML/hf_cache
+export VLLM_BATCH_INVARIANT=1
+DATA=$K/data/ICML/datasets/gsm8k
+nvidia-smi --query-gpu=name,driver_version,uuid --format=csv
+set +u; source ~/myproject/ICML/scripts/stage_env.sh qc-vllm; set -u
+cd ~/myproject/ICML/src
+python prefill_cost.py --model $K/data/ICML/models/dequant_fp32/qwen2.5-3b-instruct-Q8_0 \
+  --parent-gen $K/outputs/ICML/detcheck/qwen2.5-3b_fp32_2273534/gen_A.jsonl \
+  --data-dir $DATA --ids $DATA/determinism_subset_ids.json \
+  --out $K/outputs/ICML/cost/prefill_cost_fp32_Q8_0_${SLURM_JOB_ID}.json

@@ -11,6 +11,10 @@ Code for research plan v4.0 (target: ICML 2027). Track A pilot on the UChicago D
 | `src/dequant_gguf.py` | GGUF quant -> dense bf16/fp32 safetensors, parent config/tokenizer, per-tensor error manifest |
 | `src/child_screen.py` | Exact screening of one child along parent outputs: D, t\*, lemma 3 checks, tie-rule check, costs |
 | `src/analyze_pilot.py` | Breakdown of screening results |
+| `src/tasks.py` | Per-task prompts and grading (GSM8K numeric, MMLU-Pro letter) |
+| `src/prefill_cost.py` | Prefill vs decode cost measurement |
+| `src/cert.py` | Exact binomial certificate (thm. 4), slice-cover design (prop. 10), E1 audit rates |
+| `src/simulate_cert.py` | Monte Carlo of the certification pipeline on a truth matrix, ours vs B1 |
 | `scripts/*.sbatch` | Slurm jobs (A100 only, `--constraint=a100`) |
 | `scripts/stage_env.sh` | Unpacks the conda-packed env onto node-local NVMe (`--gres=local:NG`) |
 | `scripts/prep_gsm8k.py`, `scripts/dl_model.py` | Data and model download at pinned revisions |

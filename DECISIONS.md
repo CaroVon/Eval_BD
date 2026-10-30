@@ -39,3 +39,20 @@ A position counts as a divergence iff the predicted decoded token (smallest id a
 maximisers in the top-20 prompt logprobs) differs from the parent token. The prediction is checked
 against the child's actual generation for every question (`tie_rule_violations`). Under fp32 no
 ties occurred; the production screen can use a smaller top-k, to be re-measured for cost.
+Full GSM8K runs use top-2 (enough to detect every tie: two equal maxima are always visible);
+top-1/top-2 logprobs add ~17% over a bare prefill, top-20 adds ~140%.
+
+## D6 (2026-10-30) MMLU-Pro subsets
+TIGER-Lab/MMLU-Pro test @ b189ec7 (12,032 questions, 14 categories). A 3,000-question subset with
+equal allocation across categories (about 214 each, so category slices have comparable size) and
+a 1,000-question pilot nested in it (first 71-72 of each category's shuffled list), seed 20261030.
+Zero-shot CoT prompt in the official MMLU-Pro format ending with "The answer is (X)"; grading
+uses the official extraction order (`src/tasks.py`).
+
+## D7 (2026-10-30) Screening scope and lazy prefill
+The certificate bounds the harm rate, which only involves parent-correct questions, so only P
+needs screening. Screening prefill can stop at the first divergence (t\* + 1 parent tokens),
+since D and t\* are fixed under determinism. Both reduce screening cost without changing any
+certificate; `src/simulate_cert.py --scope P --lazy 1` accounts for them. The current screening
+job still prefills the full parent output for all questions (needed to verify lemma 3); a
+production screen would implement the chunked early stop.

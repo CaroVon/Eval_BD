@@ -20,7 +20,7 @@ from vllm import LLM, SamplingParams  # noqa: E402
 from vllm.inputs import TokensPrompt  # noqa: E402
 
 from det_check import build_prompt_ids, env_record, load_questions, read_jsonl, write_jsonl  # noqa: E402
-from det_report import extract  # noqa: E402
+from tasks import grade  # noqa: E402
 
 
 def main():
@@ -41,10 +41,10 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     data = Path(args.data_dir)
     qs = load_questions(data, args.ids)
-    gold = {r["id"]: r["gold"] for r in read_jsonl(data / "test.jsonl")}
+    by_id = {r["id"]: r for r in read_jsonl(data / "test.jsonl")}
     parent = {r["id"]: r for r in read_jsonl(args.parent_gen)}
     tok = AutoTokenizer.from_pretrained(args.model)
-    prompts = [build_prompt_ids(tok, q["question"]) for q in qs]
+    prompts = [build_prompt_ids(tok, q) for q in qs]
     y0 = [parent[q["id"]]["out_ids"] for q in qs]
 
     llm = LLM(model=args.model, dtype=args.dtype, seed=0, enable_prefix_caching=False,
@@ -104,8 +104,8 @@ def main():
                "in_D": i in tstar, "t_star": tstar.get(i), "n_div": len(div[i]),
                "tie_pos": ties[i],
                "in_D_conservative": bool(div[i] or ties[i]),
-               "parent_correct": extract(par_txt) == gold[q["id"]],
-               "child_correct": extract(txt_q[i]) == gold[q["id"]],
+               "parent_correct": grade(par_txt, by_id[q["id"]]),
+               "child_correct": grade(txt_q[i], by_id[q["id"]]),
                "child_out_ids": yq[i]}
         if i in tstar:
             t = tstar[i]

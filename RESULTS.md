@@ -51,7 +51,60 @@ from changing the batch.
 - bf16 decode of 200 questions: 17 s (batch 256); prefill along parent outputs with top-1 logprobs: 3.5 s.
 - fp32 decode: 26 s. fp32 prefill with top-20 logprobs (tie check): 12 s; needs re-measuring with small top-k.
 
+## 6. Full GSM8K test set (1,319), fp32
+
+| Version | Child acc. | \|A\|/\|P\| | median t\* | harm / repair flips | lemma 3 violations | ties |
+|---|---|---|---|---|---|---|
+| parent | 82.4% | 0 | - | - | 0 | 0 |
+| Q8_0 | 83.0% | **0.519** | 94 | 19 / 27 | 0 | 0 |
+| Q6_K | 82.0% | 0.902 | 31 | 57 / 51 | 0 | 0 |
+| Q4_K_M | 79.5% | 0.999 | 0 | 104 / 65 | 0 | 0 |
+| Q3_K_M | 47.8% | 1.000 | 0 | 503 / 46 | 0 | 0 |
+
+|P| = 1,087; 95% interval for Q8_0 |A|/|P| about 0.49 to 0.55. No flips outside D.
+
+## 7. Prefill vs decode cost, fp32, A100 (E3)
+
+| Measurement | per-token prefill / decode |
+|---|---|
+| 200 questions, `prefill_cost.py` (top-2) | 0.20 |
+| 1,319 questions, screening job (top-2) | **0.385** |
+
+Decode is cheaper per token at the larger batch, so 0.385 is the representative value. One
+full prefill along the parent outputs costs about 53% of a full generation (45 s vs 85 s).
+Bare prefill / top-1 / top-2 / top-20 on 200 questions: 5.8 / 6.8 / 6.9 / 14.1 s.
+
+## 8. Certificate simulation on the full GSM8K truth matrix
+
+`src/simulate_cert.py`, 2,000 Monte Carlo reps, independent Poisson sampling per version,
+slice-cover design (prop. 10), exact binomial certificate (thm. 4) at delta / |S|.
+Slices: all + quantile bins of parent output length and prompt length.
+
+tau = 0.05, delta = 0.05, 9 slices (>= 100 questions), |S| = 36: simultaneous coverage 0.98.
+
+| Method (r = 0.385) | speedup vs full evaluation of all 4 versions |
+|---|---|
+| ours, screening all questions, full prefill | 1.50 |
+| ours, screening P only, lazy prefill (D7) | 2.66 |
+| ours on Q8_0 only, B1 elsewhere | 3.44 |
+| **B1: no screening, audit full generations on g n P** | **3.89** |
+
+Screening must touch every parent-correct question, while B1 touches only the sampled ones
+(pi about 0.33 here), so B1 is cheaper at this granularity. Cost of ours relative to B1 on Q8_0
+as the audit rate rises (scope P, lazy):
+
+| Setting | mean pi | Q8_0 cost ours / B1, r = 0.385 | r = 0.2 |
+|---|---|---|---|
+| tau 0.05, 9 slices | 0.33 | 1.52 | 0.99 |
+| tau 0.05, 17 slices | 0.58 | 1.05 | 0.72 |
+| tau 0.02, 17 slices | 0.84 | 0.85 | 0.61 |
+| tau 0.02, 33 slices | 0.98 | 0.79 | 0.58 |
+
+Structure pays off only at high audit rates (fine-grained simultaneous certification), and the
+break-even point is set by the prefill/decode cost ratio r. Worst-slice certificates are the same
+for both methods at equal pi; the difference is cost only.
+
 ## Not yet measured
 
-End-to-end speedup (needs the audit design), full GSM8K (1,319) and MMLU-Pro, certificates and
-coverage simulation, baselines, track B, perplexity check of the dequantized models.
+MMLU-Pro, prefill cost on H100, cascade drafts, remaining baselines (B2-B6), track B,
+perplexity check of the dequantized models.

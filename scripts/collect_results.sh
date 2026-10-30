@@ -26,4 +26,16 @@ cp $K/data/ICML/envs_lock/*.txt $R/pins/
 cp ~/myproject/ICML/third_party/llama.cpp.PINNED $R/pins/
 cp $K/data/ICML/models/hf/Qwen2.5-3B-Instruct/PINNED_REVISION.json $R/pins/qwen2.5-3b-instruct.json
 cp $K/data/ICML/datasets/gsm8k/meta.json $K/data/ICML/datasets/gsm8k/determinism_subset_ids.json $R/data/
+
+# full GSM8K truth matrix: screening summaries + certificate simulations
+T=$O/truth/gsm8k_full_fp32_qwen2.5-3b_2273994
+mkdir -p $R/truth/gsm8k_full_fp32
+for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do
+  cp $T/screen/$m/summary.json $R/truth/gsm8k_full_fp32/summary_$m.json
+done
+cp $T/sim_r*.json $R/truth/gsm8k_full_fp32/ 2>/dev/null || true
+mkdir -p $R/cost
+cp $O/cost/*.json $R/cost/ 2>/dev/null || true
+mkdir -p $R/data/mmlu_pro
+cp $K/data/ICML/datasets/mmlu_pro/meta.json $K/data/ICML/datasets/mmlu_pro/*_ids.json $R/data/mmlu_pro/
 du -sh $R
