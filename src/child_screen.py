@@ -35,6 +35,8 @@ def main():
     ap.add_argument("--max-num-seqs", type=int, default=256)
     ap.add_argument("--topk", type=int, default=20)
     ap.add_argument("--dtype", default="bfloat16")
+    ap.add_argument("--enforce-eager", action="store_true",
+                    help="disable torch.compile and CUDA graphs")
     args = ap.parse_args()
 
     out = Path(args.out_dir) / args.name
@@ -49,7 +51,7 @@ def main():
 
     llm = LLM(model=args.model, dtype=args.dtype, seed=0, enable_prefix_caching=False,
               async_scheduling=False, max_num_seqs=args.max_num_seqs, max_model_len=4096,
-              gpu_memory_utilization=0.85)
+              gpu_memory_utilization=0.85, enforce_eager=args.enforce_eager)
     cost = {}
 
     # full child generation (ground truth)

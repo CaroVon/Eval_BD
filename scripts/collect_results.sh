@@ -59,3 +59,23 @@ cp $O/cost/*.json $R/cost/ 2>/dev/null || true
 mkdir -p $R/data/mmlu_pro
 cp $K/data/ICML/datasets/mmlu_pro/meta.json $K/data/ICML/datasets/mmlu_pro/*_ids.json $R/data/mmlu_pro/
 du -sh $R
+# additional parents: determinism reports and truth-matrix summaries
+for d in $O/detcheck/phi-3.5-mini*; do
+  [ -d "$d" ] || continue
+  b=$(basename $d); mkdir -p $R/detcheck/$b
+  cp $d/report.json $d/run_*.json $R/detcheck/$b/ 2>/dev/null || true
+done
+for d in $O/truth/gsm8k_full_fp32_phi-3.5-mini*; do
+  [ -d "$d/screen" ] || continue
+  b=$(basename $d); mkdir -p $R/truth/$b
+  for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do
+    cp $d/screen/$m/summary.json $R/truth/$b/summary_$m.json 2>/dev/null || true
+  done
+  cp $d/margins/analysis.json $R/truth/$b/margin_analysis.json 2>/dev/null || true
+done
+for m in phi-3.5-mini-instruct; do
+  for q in Q8_0 Q6_K Q4_K_M Q3_K_M; do
+    cp $K/data/ICML/models/dequant_fp32/$m-$q/MANIFEST.json $R/manifests/fp32_${m}_$q.json 2>/dev/null || true
+  done
+done
+cp $K/data/ICML/models/hf/Phi-3.5-mini-instruct/PINNED_REVISION.json $R/pins/phi-3.5-mini-instruct.json 2>/dev/null || true

@@ -32,6 +32,8 @@ def main():
     ap.add_argument("--ids", required=True)
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--dtype", default="float32")
+    ap.add_argument("--enforce-eager", action="store_true",
+                    help="disable torch.compile and CUDA graphs")
     args = ap.parse_args()
 
     qs = load_questions(Path(args.data_dir), args.ids)
@@ -42,7 +44,7 @@ def main():
 
     llm = LLM(model=args.model, dtype=args.dtype, seed=0, enable_prefix_caching=False,
               async_scheduling=False, max_num_seqs=256, max_model_len=4096,
-              gpu_memory_utilization=0.85)
+              gpu_memory_utilization=0.85, enforce_eager=args.enforce_eager)
     t0 = time.time()
     outs = llm.generate([TokensPrompt(prompt_token_ids=p + y) for p, y in zip(prompts, y0)],
                         SamplingParams(temperature=0.0, max_tokens=1, prompt_logprobs=2))

@@ -149,6 +149,8 @@ def main():
     ap.add_argument("--max-num-seqs", type=int, default=256)
     ap.add_argument("--max-tokens", type=int, default=1024)
     ap.add_argument("--dtype", default="bfloat16")
+    ap.add_argument("--enforce-eager", action="store_true",
+                    help="disable torch.compile and CUDA graphs")
     ap.add_argument("--limit", type=int, default=0)
     args = ap.parse_args()
 
@@ -163,7 +165,7 @@ def main():
     llm = LLM(model=args.model, dtype=args.dtype, seed=0,
               enable_prefix_caching=False, async_scheduling=False,
               max_num_seqs=args.max_num_seqs, max_model_len=4096,
-              gpu_memory_utilization=0.85)
+              gpu_memory_utilization=0.85, enforce_eager=args.enforce_eager)
 
     log = {"config": env_record(args, llm), "phases": []}
     for ph in args.phases.split(","):

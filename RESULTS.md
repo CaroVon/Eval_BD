@@ -368,6 +368,29 @@ GSM8K) and nothing below Q6_K. These chunk costs come from separate lock-step ge
 engine that mixes verification and decoding in one batch could do better, so treat them as
 conservative.
 
+## 22. Second parent (exploratory, DECISIONS.md D8): Phi-3.5-mini-instruct
+
+Ladder dequantization works for phi3 (median / max relative weight error: Q8_0 0.54% / 0.77%,
+Q6_K 1.78% / 2.34%, Q4_K_M 2.34% / 7.5%, Q3_K_M 7.2% / 15.1%; BPW 8.50 / 6.56 / 5.02 / 4.11).
+
+**Determinism check fails in the same fp32 batch-invariant config that Qwen passes**
+(200 GSM8K questions, A100, job 2276157):
+
+| Layer | Phi-3.5-mini | Qwen2.5-3B |
+|---|---|---|
+| 1 repeat run, separate processes | **5/200 differ** (1 answer) | 0 |
+| 2 prefill vs decode | 5 tokens in the same 5 questions | 0 |
+| 3 continuation | 5/400 | 0 |
+| 4 batch 256 -> 8, shuffled | 1/200 (a different question) | 0 |
+
+Processes A and C agree on those 5 questions and only process B differs (its prefill also
+disagrees with A), so the variation is between processes, not with batch composition. A likely
+cause is kernel selection that depends on timing (autotuning) for matmul shapes outside vLLM's
+tuned batch-invariant table (Phi-3.5: hidden 3072, intermediate 8192; Qwen2.5-3B's shapes are in
+it). Being tested: the same check with `--enforce-eager` (no torch.compile / CUDA graphs).
+This is the plan's E4 risk (Vosti 2026) showing up for a second model family: batch-invariant
+mode alone does not guarantee the prefill-decode invariance of definition 2.
+
 ## Not yet measured
 
 MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
