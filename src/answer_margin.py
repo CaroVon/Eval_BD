@@ -14,15 +14,14 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-from classify_divergence import BYTE_DEC  # noqa: E402
+import tokdecode  # noqa: E402
 
 truth, vocab_path, task = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
-inv = {v: k for k, v in json.load(open(vocab_path, encoding="utf-8")).items()}
+_text = tokdecode.load(vocab_path)
 
 
 def piece(t):
-    s = inv.get(int(t), "")
-    return bytearray(BYTE_DEC[c] for c in s if c in BYTE_DEC).decode("utf-8", errors="replace")
+    return _text([t])
 
 
 M = np.load(truth / "margins" / "margins_parent.npz")

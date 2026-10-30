@@ -17,6 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from tasks import answer  # noqa: E402
+import tokdecode  # noqa: E402
 
 W, RWIN = 8, 30
 
@@ -43,16 +44,9 @@ def read_jsonl(p):
 
 def main():
     truth, vocab_path, test_path = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
-    inv = {v: k for k, v in json.load(open(vocab_path, encoding="utf-8")).items()}
+    text = tokdecode.load(vocab_path)
     recs = {r["id"]: r for r in read_jsonl(test_path)}
     gen = {r["id"]: r for r in read_jsonl(truth / "parent_gen" / "gen_A.jsonl")}
-
-    def piece(t):
-        return inv.get(t)
-
-    def text(ids):
-        s = "".join(inv.get(t, "") for t in ids)
-        return bytearray(BYTE_DEC[c] for c in s if c in BYTE_DEC).decode("utf-8", errors="replace")
 
     def tclass(t, other, pos):
         if pos == 0:

@@ -317,6 +317,34 @@ chemistry 13, math 11, physics 10, business 7. None reaches "answer is", so pare
 is 6.9% (47.5% on the others). Screening is barely affected (Q8_0 share in D 0.82 vs 0.80).
 Raising Lmax would add these questions to P with long outputs, which makes screening harder.
 
+## 20. Regime map: when exact screening is cheaper than B1 (`results/regime_map.json`)
+
+Per parent-correct question, screening (lazy, on P) beats B1 at audit rate pi iff
+pi > pi* = r (Lp + E[screen prefix]) / (E[full audit] - E[1_D cont audit]).
+
+| Version | pi* at r = 0.2 | r = 0.29 (H100) | r = 0.365 (A100) |
+|---|---|---|---|
+| GSM8K Q8_0 | 0.32 | 0.46 | 0.59 |
+| GSM8K Q6_K | 0.53 | 0.82 | never |
+| MMLU-Pro Q8_0 | 0.47 | 0.69 | 0.88 |
+| GSM8K Q4_K_M, MMLU-Pro Q6_K / Q4_K_M | never | never | never |
+
+Uniform sufficient audit rate of the cover design, 1 - (delta/|S|)^(1/k), delta = 0.05:
+
+| N_g | tau | \|S\| = 36 | 200 | 2000 |
+|---|---|---|---|---|
+| 100 | 0.05 | 0.73 | 0.81 | 0.88 |
+| 300 | 0.05 | 0.36 | 0.42 | 0.51 |
+| 300 | 0.02 | 0.67 | 0.75 | 0.83 |
+| 1000 | 0.05 | 0.12 | 0.15 | 0.19 |
+| 1000 | 0.02 | 0.28 | 0.34 | 0.41 |
+| 1000 | 0.01 | 0.48 | 0.56 | 0.65 |
+| 3000 | 0.01 | 0.20 | 0.24 | 0.30 |
+
+Exact screening pays off only when three things hold together: a high bit-width version (Q8_0),
+fine-grained simultaneous certification (slices of about 100-300 or tau <= 0.02), and a low
+prefill/decode cost ratio r.
+
 ## Not yet measured
 
 Chunk verification cost, MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),

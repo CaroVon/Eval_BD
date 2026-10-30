@@ -17,15 +17,14 @@ from scipy.optimize import minimize_scalar
 from scipy.stats import norm
 
 sys.path.insert(0, str(Path(__file__).parent))
-from classify_divergence import BYTE_DEC  # noqa: E402
+import tokdecode  # noqa: E402
 
 truth, vocab_path = Path(sys.argv[1]), sys.argv[2]
-inv = {v: k for k, v in json.load(open(vocab_path, encoding="utf-8")).items()}
+_text = tokdecode.load(vocab_path)
 
 
 def tok_text(t):
-    s = inv.get(int(t), "")
-    return bytearray(BYTE_DEC[c] for c in s if c in BYTE_DEC).decode("utf-8", errors="replace")
+    return _text([t])
 
 
 def tok_class(t, pos):
