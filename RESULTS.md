@@ -579,7 +579,22 @@ over-predicts by about 10% systematically (most for Q4_K_M), consistent with a l
 perturbation tail near zero margin. As a first-order description, rho ~ c f_m(0) sigma / sqrt(2 pi)
 with c ~ 0.9.
 
+## 29. Prefill/decode cost at 7B (cost only; Qwen2.5-7B-Instruct parent, fp32, compiled, A100)
+
+Same 1,319 GSM8K prefill sequences as sec. 9 (the 3B parent outputs; the two models share the
+tokenizer), job 2276787.
+
+| Model | decode s/token | prefill (top-2) s/token | r | bare-prefill r |
+|---|---|---|---|---|
+| Qwen2.5-3B Q8_0 | 2.45e-4 | 0.89e-4 | 0.365 | 0.308 |
+| Qwen2.5-7B parent | 4.01e-4 (1.6x) | 1.87e-4 (2.1x) | **0.467** | 0.40 |
+
+The cost ratio gets worse with scale in this regime: batched (256) prefill is compute-bound and
+grows with parameter count, while batched decode is partly bandwidth-bound and grows less. In
+batched offline evaluation, larger models make exact screening relatively more expensive, the
+opposite of the small-batch serving intuition behind E3.
+
 ## Not yet measured
 
-Qwen2.5-7B (scale), second parent family, remaining baselines (B2-B6),
+Qwen2.5-7B truth matrix, second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.
