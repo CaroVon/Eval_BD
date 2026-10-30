@@ -309,6 +309,14 @@ its own reasoning, and the child flips because an earlier wording divergence sen
 different reasoning path. Answer-position confidence therefore does not predict CoT flips, unlike
 decision-margin predictors for single-step decisions.
 
+## 19. MMLU-Pro truncation at Lmax = 1024
+
+The 72 truncated parent outputs are long calculations, not repetition loops: median share of
+repeated 20-grams 0.11 (4 of 72 above 0.5; 0.00 for the rest). By category: engineering 25,
+chemistry 13, math 11, physics 10, business 7. None reaches "answer is", so parent accuracy on them
+is 6.9% (47.5% on the others). Screening is barely affected (Q8_0 share in D 0.82 vs 0.80).
+Raising Lmax would add these questions to P with long outputs, which makes screening harder.
+
 ## Not yet measured
 
 Chunk verification cost, MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
