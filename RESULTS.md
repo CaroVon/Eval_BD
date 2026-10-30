@@ -398,6 +398,36 @@ from the compiled path, and eager execution is the deterministic configuration f
 The execution configuration of every truth matrix must therefore record the compile mode, and
 the four-layer check has to be rerun per model family rather than assumed from another family.
 
+## 23. Plan metric (iv): worst-slice bound at equal compute (`src/eq_budget.py`)
+
+Per version, the inclusion-probability floor is bisected so the expected audit cost equals a
+budget b (fraction of that version's full evaluation); value = mean worst-slice UCB over 400
+reps, tau = 0.05 design, 9 slices, |S| = 36, r = 0.365. "-" = the minimum cost of the method
+(screening, or the cover design itself) exceeds b.
+
+GSM8K, true worst-slice H / theta: Q8_0 0.029 / 0.012, Q6_K 0.063 / 0.021.
+
+| Version, method | b = 0.4 | 0.6 | 0.8 | 1.0 |
+|---|---|---|---|---|
+| Q8_0 harm, B1 | 0.078 | 0.053 | 0.029 | 0.029 |
+| Q8_0 harm, exact screening | 0.094 | **0.032** | 0.029 | 0.029 |
+| Q8_0 net, B1 | 0.089 | 0.056 | 0.037 | 0.012 |
+| Q8_0 net, exact screening | - | 0.056 | **0.012** | 0.012 |
+| Q6_K harm, B1 | 0.127 | 0.097 | 0.063 | 0.063 |
+| Q6_K harm, exact screening | 0.158 | 0.105 | 0.071 | 0.063 |
+| Q6_K net, B1 | 0.133 | 0.088 | 0.056 | 0.021 |
+| Q6_K net, exact screening | - | 0.112 | 0.068 | 0.033 |
+
+MMLU-Pro (true worst-slice H / theta: Q8_0 0.084 / 0.020, Q6_K 0.120 / 0.028): screening is
+never better; harm bounds saturate at H by b = 0.4-0.6, and the net bound with screening trails B1
+(Q8_0 at b = 0.8: 0.086 vs 0.073).
+
+At b = 0.6 on GSM8K Q8_0, the screened harm certificate is nearly exact (width 0.003 vs 0.024 for
+B1, about 8x tighter); at b = 0.8 the screened net certificate reaches the exact theta (0.012 vs
+0.037). This is the regime of the break-even analysis (sec. 20, pi* = 0.59): exact screening
+wins at equal compute only for the high bit-width version, on the shorter-output task, and at
+budgets around 0.6-0.8 of full evaluation.
+
 ## Not yet measured
 
 MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),

@@ -46,6 +46,7 @@ for pair in "gsm8k_full_fp32_qwen2.5-3b_2273994 gsm8k_full_fp32" "mmlupro_pilot1
   cp $O/truth/$1/reanchor*.json $R/truth/$2/ 2>/dev/null || true
   cp $O/truth/$1/margins/predict_D_*.json $R/truth/$2/ 2>/dev/null || true
   cp $O/truth/$1/answer_margin.json $R/truth/$2/ 2>/dev/null || true
+  cp $O/truth/$1/eq_budget_*.json $R/truth/$2/ 2>/dev/null || true
 done
 cp $O/cost/*.json $R/cost/ 2>/dev/null || true
 cp $T/margins/analysis.json $R/truth/mmlupro_pilot1000_fp32/margin_analysis.json 2>/dev/null || true
