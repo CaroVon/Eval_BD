@@ -30,9 +30,13 @@ def sha256(path, chunk=1 << 24):
 
 
 def load_ref_tensors(ref_dir):
-    idx = json.loads((ref_dir / "model.safetensors.index.json").read_text())
+    index = ref_dir / "model.safetensors.index.json"
+    if index.exists():
+        shards = sorted(set(json.loads(index.read_text())["weight_map"].values()))
+    else:  # single-file checkpoint
+        shards = ["model.safetensors"]
     out = {}
-    for shard in sorted(set(idx["weight_map"].values())):
+    for shard in shards:
         with safe_open(ref_dir / shard, framework="pt") as f:
             for k in f.keys():
                 out[k] = f.get_tensor(k)
