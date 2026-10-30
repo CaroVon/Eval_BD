@@ -6,6 +6,9 @@ from pathlib import Path
 
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).parent))
+import tokdecode  # noqa: E402
+
 
 def read_jsonl(p):
     with open(p, encoding="utf-8") as f:
@@ -13,7 +16,7 @@ def read_jsonl(p):
 
 
 truth, vocab_path = Path(sys.argv[1]), sys.argv[2]
-inv = {v: k for k, v in json.load(open(vocab_path, encoding="utf-8")).items()}
+_text = tokdecode.load(vocab_path)
 gen = {r["id"]: r for r in read_jsonl(truth / "parent_gen" / "gen_A.jsonl")}
 print(f"== {truth}")
 for ver in ["Q8_0", "Q6_K", "Q4_K_M", "Q3_K_M"]:
@@ -63,5 +66,5 @@ for ver in ["Q8_0", "Q6_K", "Q4_K_M", "Q3_K_M"]:
             if r["in_D"] and r["t_star"] == 0:
                 p_tok = gen[r["id"]]["out_ids"][0]
                 c_tok = r["child_out_ids"][0]
-                pairs[(inv.get(p_tok, p_tok), inv.get(c_tok, c_tok))] += 1
+                pairs[(_text([p_tok]), _text([c_tok]))] += 1
         print("        top t*=0 (parent -> child) first tokens:", pairs.most_common(5))

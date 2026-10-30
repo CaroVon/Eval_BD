@@ -428,6 +428,49 @@ B1, about 8x tighter); at b = 0.8 the screened net certificate reaches the exact
 wins at equal compute only for the high bit-width version, on the shorter-output task, and at
 budgets around 0.6-0.8 of full evaluation.
 
+## 24. Phi-3.5-mini truth matrix (GSM8K 1,319, fp32, eager, A100; job 2276333)
+
+| Version | Child acc. | \|A\|/\|P\| (Qwen) | median t\* | harm / repair | lemma 3 violations | ties |
+|---|---|---|---|---|---|---|
+| parent | 82.0% | 0 | - | - | 0 | 0 |
+| Q8_0 | 80.7% | **0.414** (0.519) | 92 | 30 / 13 | 0 | 1 question |
+| Q6_K | 81.5% | **0.779** (0.902) | 53 | 38 / 32 | 0 | 0 |
+| Q4_K_M | 77.5% | 0.974 (0.999) | 20 | 113 / 54 | 0 | 0 |
+| Q3_K_M | 73.8% | 1.000 (1.000) | 13 | 152 / 45 | 0 | 0 |
+
+Local decoding of Phi tokens matches vLLM text on 1,319/1,319 outputs.
+
+**The margin scaling law holds across families** (rho/sigma vs f_m(0)/sqrt(2 pi)):
+
+| Parent / dataset | f_m(0) | predicted rho/sigma | observed rho/sigma, Q8 / Q6 / Q4 / Q3 |
+|---|---|---|---|
+| Qwen2.5-3B / GSM8K | 0.12 | 0.048 | 0.040 / 0.044 / 0.037 / (not noise-like) |
+| Qwen2.5-3B / MMLU-Pro | 0.19 | 0.077 | 0.071 / 0.074 / 0.068 / - |
+| Phi-3.5-mini / GSM8K | 0.07 | 0.028 | 0.027 / 0.027 / 0.023 / 0.026 |
+
+Noise sd per bit width is nearly family-independent (Phi 0.08 / 0.26 / 0.90 vs Qwen 0.07 / 0.23 /
+0.83 for Q8 / Q6 / Q4). Phi has 60% of Qwen's parent near-tie density, which is why its |A|/|P| is
+lower: screening power is mostly a property of the parent's own indecision. The Gaussian model
+is also calibrated at the question level for Phi (Q8_0 |D|/N pred 0.446, obs 0.432).
+
+Other replications: divergences are lexical (word 71%, punctuation 15% for Q8_0), 78% re-align
+within 30 tokens, 88% keep the answer; harm flips occur where the parent is confident at the answer
+position (0 of 23 located Q8_0 harms below answer margin 1). Flips are **not** symmetric for Phi
+(harm / repair 30/13 Q8_0, 152/45 Q3_K_M): quantization degrades Phi systematically, unlike the
+near-symmetric flips of Qwen.
+
+Equal budget (sec. 23 method), Phi Q8_0, true worst-slice H / theta 0.051 / 0.038:
+
+| Method | b = 0.6 | b = 0.8 |
+|---|---|---|
+| harm: screening / B1 | **0.051** / 0.082 | 0.051 / 0.051 |
+| net: screening / B1 | 0.078 / 0.092 | **0.038** / 0.069 |
+
+The Q8_0 equal-budget advantage replicates: screened certificates reach the exact H at b = 0.6
+and the exact theta at b = 0.8. For Q6_K the two are close (net, b = 0.8: 0.045 vs 0.048).
+Predictor (sec. 17) with 50 calibration questions: Q8_0 overestimates (0.553 vs 0.414; few
+divergences in 50 questions), Q6_K 0.796 vs 0.783, Q4_K_M 0.975 vs 0.976.
+
 ## Not yet measured
 
 MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),

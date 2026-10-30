@@ -80,3 +80,10 @@ for m in phi-3.5-mini-instruct; do
   done
 done
 cp $K/data/ICML/models/hf/Phi-3.5-mini-instruct/PINNED_REVISION.json $R/pins/phi-3.5-mini-instruct.json 2>/dev/null || true
+# phi extras
+for d in $O/truth/gsm8k_full_fp32_phi-3.5-mini*; do
+  [ -d "$d/screen" ] || continue
+  b=$(basename $d)
+  cp $d/divergence_classes.json $d/answer_margin.json $d/sim_*.json $d/eq_budget_*.json $R/truth/$b/ 2>/dev/null || true
+  cp $d/margins/predict_D_*.json $R/truth/$b/ 2>/dev/null || true
+done
