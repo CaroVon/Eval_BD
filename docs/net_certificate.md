@@ -53,9 +53,40 @@ of B. Simulations (RESULTS.md sec. 15) show it is the only way to certify Q6_K o
 or Q6_K on MMLU-Pro at tau = 0.05, but only with inclusion probabilities of 0.9-0.99, i.e. close to
 the cost of full evaluation.
 
+## Two simple consequences
+
+**Proposition (harm certificates cannot be tau-precise for theta when repairs are common).** Let
+UCB be any upper bound that is valid for H_g (P(H_g <= UCB) >= 1 - delta for all configurations).
+If Rep_g >= tau at configuration F^0, then P_{F^0}(UCB < theta_g + tau) <= delta.
+*Proof.* theta_g + tau <= theta_g + Rep_g = H_g, so {UCB < theta_g + tau} is contained in
+{UCB < H_g}, which has probability at most delta. This holds at every audit rate; it is the
+situation of MMLU-Pro Q8_0 (Rep = 4.6%, so tau below about 0.046 is out of reach for a harm
+certificate regardless of cost).
+
+**Proposition (audit lower bound for the net certificate, Poisson designs).** Fix g, candidate sets
+A (harm side) and B (repair side), inclusion probabilities pi_i fixed in advance, and a procedure
+valid for theta_g that is tau-precise at F^0. Then
+(i) for every U subset of A with F^0_U = 0 and |U| >= tau N_g: prod_{i in U} (1 - pi_i) <= 2 delta;
+(ii) for every V subset of B with F^0_V = 1 and |V| >= tau N_g: prod_{i in V} (1 - pi_i) <= 2 delta.
+*Proof.* (i) is theorem 7 (adding harms on U raises theta by |U|/N_g >= tau). For (ii), let
+F^1 = F^0 - 1_V; removing repairs on V raises theta by |V|/N_g >= tau. On the event that no item
+of V is audited, the observations under F^0 and F^1 coincide, and the rest of the argument of
+theorem 7 applies unchanged.
+
+With k = ceil(tau N_g), (ii) says every repair candidate that is actually a repair at F^0, except at
+most k - 1, needs pi_i >= 1 - (2 delta)^{1/k}. Because the design is fixed before F is known, being
+precise at every configuration with at least k repairs on B forces this rate on all of B (up to
+k - 1 items), so the necessary expected audits grow from about |A| (1 - (2 delta)^{1/k}) to about
+(|A| + |B|)(1 - (2 delta)^{1/k}). The extra price of certifying theta instead of H is the repair
+candidate set B; exact screening shrinks it to g \ P n D, as it shrinks A.
+
+These two-point bounds are of the same order as the zero-harm bound. They do not explain the
+much higher rates (0.9-0.99) the simulations need when both sides carry many flips; that regime
+needs a variance-type lower bound (open).
+
 ## Open questions
 
-- Matching lower bound for auditing cost of net certification (analogue of theorems 7-8): the
-  two-point argument now needs configurations that move harm and repair counts together.
+- Variance-type lower bound when harm and repair counts are both large (the regime of the
+  simulations); the two-point bounds above only give the zero-flip rate.
 - Joint design of pi on A and B (currently the zero-harm cover design with a floor).
 - Whether a correlated (paired) design across harm and repair candidates tightens the bound.
