@@ -259,7 +259,41 @@ Q6_K (0.028, 0.120).
   cost and Q4_K_M / Q3_K_M gain nothing from it.
 - The zero-harm cover design (pi about 0.33 here) certifies nothing: every version has real flips.
 
+## 16. Re-anchored exact verification, replayed (`src/sim_reanchor.py`)
+
+Replays a prompt-lookup verifier on the known child outputs: the draft is the parent text after
+the most recent match of the child's last n tokens; each round verifies L draft tokens in one pass
+(cost r (L + 1), accepted prefix + one bonus token), or decodes one token when there is no anchor.
+Rejected draft tokens are charged. The output equals the child output by construction. r = 0.365.
+
+| Version | GSM8K: L=4,n=4 / L=16,n=4 / adaptive | MMLU-Pro: L=4,n=4 / L=16,n=4 / adaptive |
+|---|---|---|
+| Q8_0 | **2.17x** / 1.88x / 2.08x | **1.81x** / 1.47x / 1.74x |
+| Q6_K | 1.65x / 1.28x / 1.57x | 1.43x / 1.09x / 1.38x |
+| Q4_K_M | 1.26x / 0.93x / 1.26x | 1.23x / 0.93x / 1.23x |
+| Q3_K_M | - / 0.81x / - | - / 0.83x / - |
+
+Short drafts win because acceptance is low (Q8_0, L = 16: 76% GSM8K, 61% MMLU-Pro). Caveat:
+these numbers assume a verified token costs r = 0.365, measured on long prefills. Short chunks
+may use the GPU less efficiently; `src/chunk_cost.py` (job pending) measures the per-token cost of
+L-token chunks on a cached prefix. Each round is a sequential step, so latency grows with rounds
+(0.19 rounds per token for Q8_0 at L = 16).
+
+## 17. Predicting |A|/|P| from parent margins (`src/predict_D.py`)
+
+sigma_q fitted on the first n_cal questions only; P(in D) = 1 - prod_t Phi(m_t / sigma_q) from
+parent margins for the remaining questions. Prediction information only (design, prop. 12).
+
+| n_cal = 50 | GSM8K obs / pred | question AUC | MMLU-Pro obs / pred | question AUC |
+|---|---|---|---|---|
+| Q8_0 | 0.514 / 0.578 | 0.79 | 0.759 / 0.809 | 0.85 |
+| Q6_K | 0.901 / 0.940 | 0.81 | 0.979 / 0.987 | 0.95 |
+| Q4_K_M | 0.999 / 0.999 | 0.98 | 1.000 / 1.000 | - |
+
+Fifty child questions plus the parent margins predict |A|/|P| within +0.04 to +0.06, always on
+the conservative side; results are stable for n_cal = 100 and 200.
+
 ## Not yet measured
 
-MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
+Chunk verification cost, MMLU-Pro 3,000, second parent family, remaining baselines (B2-B6),
 track B, perplexity check of the dequantized models.

@@ -41,6 +41,12 @@ mkdir -p $R/truth/mmlupro_pilot1000_fp32
 cp $T/divergence_classes.json $R/truth/mmlupro_pilot1000_fp32/ 2>/dev/null || true
 cp $T/net_*.json $R/truth/mmlupro_pilot1000_fp32/ 2>/dev/null || true
 cp $O/truth/gsm8k_full_fp32_qwen2.5-3b_2273994/net_*.json $R/truth/gsm8k_full_fp32/ 2>/dev/null || true
+for pair in "gsm8k_full_fp32_qwen2.5-3b_2273994 gsm8k_full_fp32" "mmlupro_pilot1000_fp32_qwen2.5-3b_2274801 mmlupro_pilot1000_fp32"; do
+  set -- $pair
+  cp $O/truth/$1/reanchor*.json $R/truth/$2/ 2>/dev/null || true
+  cp $O/truth/$1/margins/predict_D_*.json $R/truth/$2/ 2>/dev/null || true
+done
+cp $O/cost/*.json $R/cost/ 2>/dev/null || true
 cp $T/margins/analysis.json $R/truth/mmlupro_pilot1000_fp32/margin_analysis.json 2>/dev/null || true
 mkdir -p $R/truth/mmlupro_pilot1000_fp32
 for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do
