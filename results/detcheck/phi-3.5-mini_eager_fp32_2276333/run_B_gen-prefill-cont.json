@@ -1,0 +1,53 @@
+{
+ "config": {
+  "vllm": "0.32.0",
+  "torch": "2.13.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "capability": [
+   8,
+   0
+  ],
+  "node": "j004-ds",
+  "slurm_job": "2276333",
+  "env": {
+   "CUDA_VISIBLE_DEVICES": "0",
+   "VLLM_BATCH_INVARIANT": "1"
+  },
+  "args": {
+   "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/hf/Phi-3.5-mini-instruct",
+   "data_dir": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k",
+   "ids": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k/determinism_subset_ids.json",
+   "out_dir": "/net/spaces/jevans/klab/caroyf/outputs/ICML/detcheck/phi-3.5-mini_eager_fp32_2276333",
+   "phases": "gen,prefill,cont",
+   "tag": "B",
+   "ref": "A",
+   "shuffle": 0,
+   "max_num_seqs": 256,
+   "max_tokens": 1024,
+   "dtype": "float32",
+   "enforce_eager": true,
+   "limit": 0
+  }
+ },
+ "phases": [
+  {
+   "phase": "gen",
+   "tag": "B",
+   "seconds": 34.96462440490723,
+   "tokens": 52315
+  },
+  {
+   "phase": "prefill",
+   "ref": "A",
+   "seconds": 8.065242528915405,
+   "tokens": 69667
+  },
+  {
+   "phase": "cont",
+   "ref": "A",
+   "seconds": 35.69476890563965,
+   "n": 400
+  }
+ ]
+}

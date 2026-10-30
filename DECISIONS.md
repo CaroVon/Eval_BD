@@ -67,3 +67,9 @@ made after G1. Same ladder, no imatrix, fp32 execution, A100 only.
 `docs/net_certificate.md`. It certifies theta = H - Rep instead of the harm rate H; it is valid
 for any configuration and reduces to the plan's certificate when B is not audited. Reported
 alongside the harm certificate, not as a replacement, until its design and lower bound are worked out.
+
+## D10 (2026-10-30) Execution mode is per model family; Phi-3.5 runs eager
+Phi-3.5-mini fails the four-layer check in compiled mode (5/200 questions differ between
+processes) and passes with `--enforce-eager`. Qwen2.5-3B passes in compiled mode (three separate
+checks). Rule: every parent gets its own four-layer check in the exact mode used for its truth
+matrix, and the mode (compiled / eager) is part of the recorded execution configuration.

@@ -387,9 +387,16 @@ Processes A and C agree on those 5 questions and only process B differs (its pre
 disagrees with A), so the variation is between processes, not with batch composition. A likely
 cause is kernel selection that depends on timing (autotuning) for matmul shapes outside vLLM's
 tuned batch-invariant table (Phi-3.5: hidden 3072, intermediate 8192; Qwen2.5-3B's shapes are in
-it). Being tested: the same check with `--enforce-eager` (no torch.compile / CUDA graphs).
-This is the plan's E4 risk (Vosti 2026) showing up for a second model family: batch-invariant
-mode alone does not guarantee the prefill-decode invariance of definition 2.
+it). This is the plan's E4 risk (Vosti 2026) showing up for a second model family:
+batch-invariant mode alone does not guarantee the prefill-decode invariance of definition 2.
+
+**With `--enforce-eager` (no torch.compile, no CUDA graphs) all four layers pass** (job 2276333):
+three separate processes produce identical outputs (52,315 tokens each), prefill top-1 matches
+decoding on every token, all 400 continuations match, batch 256 -> 8 changes nothing. Decode is
+about as fast as compiled mode here (gen A 37.5 s vs 32.8 s). So the cross-process variation comes
+from the compiled path, and eager execution is the deterministic configuration for Phi-3.5.
+The execution configuration of every truth matrix must therefore record the compile mode, and
+the four-layer check has to be rerun per model family rather than assumed from another family.
 
 ## Not yet measured
 
