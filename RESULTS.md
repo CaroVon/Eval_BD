@@ -594,6 +594,40 @@ grows with parameter count, while batched decode is partly bandwidth-bound and g
 batched offline evaluation, larger models make exact screening relatively more expensive, the
 opposite of the small-batch serving intuition behind E3.
 
+## 30. Decode batch size decides the economics (cost only; Qwen2.5-3B Q8_0, fp32, A100)
+
+Same 1,319 prefill sequences, max_num_seqs = 32 instead of 256 (job 2276900):
+
+| max_num_seqs | decode s/token | prefill (top-2) s/token | r |
+|---|---|---|---|
+| 256 | 2.45e-4 | 0.90e-4 | 0.365 |
+| 32 | 11.8e-4 (4.8x) | 0.90e-4 (same) | **0.076** |
+
+At small decode batches decoding is bandwidth-bound and per-token cost rises about 5x, while prefill
+throughput does not depend on the decode batch. Break-even audit rate pi* at r = 0.076
+(sec. 20 formula):
+
+| Parent / dataset | Q8_0 | Q6_K | Q4_K_M |
+|---|---|---|---|
+| Qwen2.5-3B / GSM8K | 0.12 | 0.19 | 0.74 |
+| Qwen2.5-3B / MMLU-Pro | 0.17 | 0.41 | never |
+| Phi-3.5-mini / GSM8K | 0.11 | 0.14 | 0.24 |
+| SmolLM2-1.7B / GSM8K | 0.13 | 0.19 | 0.67 |
+
+Qwen GSM8K at r = 0.076, cover design (tau 0.05, 9 slices): Q8_0 audit cost 57k vs 97k for B1
+(0.59x), ladder speedup 4.31 (ours) / 4.34 (sel) vs 3.90 (B1). Equal budget (worst-slice UCB, true
+H / theta 0.029 / 0.012):
+
+| Q8_0 | b = 0.4 | b = 0.6 |
+|---|---|---|
+| harm: screening / B1 | **0.029** (exact) / 0.078 | 0.029 / 0.054 |
+| net: screening / B1 | 0.030 / 0.089 | **0.012** (exact) / 0.056 |
+
+Q6_K also gains (net at b = 0.8: 0.021 exact vs 0.056). Which regime applies is set by the
+largest decode batch that fits in memory: 3B and 7B at 80 GB fit 256 sequences (unfavourable,
+r = 0.37-0.47), while larger models, longer outputs or less memory force small batches, where exact
+screening gives several-fold savings.
+
 ## Not yet measured
 
 Qwen2.5-7B truth matrix, second parent family, remaining baselines (B2-B6),

@@ -25,6 +25,6 @@ GPU=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1 | tr ' ' '_')
 nvidia-smi --query-gpu=name,driver_version,compute_cap,uuid --format=csv
 set +u; source ~/myproject/ICML/scripts/stage_env.sh qc-vllm; set -u
 cd ~/myproject/ICML/src
-python prefill_cost.py --model "$MODEL" \
+python prefill_cost.py --model "$MODEL" --max-num-seqs ${MAXSEQS:-256} \
   --parent-gen "$PARENT_GEN" --data-dir $DATA --ids "$IDS" \
-  --out $K/outputs/ICML/cost/prefill_cost_${MTAG}_n$(python -c "import json;print(len(json.load(open('$IDS'))))")_${GPU}_${SLURM_JOB_ID}.json
+  --out $K/outputs/ICML/cost/prefill_cost_${MTAG}_bs${MAXSEQS:-256}_n$(python -c "import json;print(len(json.load(open('$IDS'))))")_${GPU}_${SLURM_JOB_ID}.json

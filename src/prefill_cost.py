@@ -37,6 +37,7 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--dtype", default="float32")
     ap.add_argument("--reps", type=int, default=2)
+    ap.add_argument("--max-num-seqs", type=int, default=256)
     args = ap.parse_args()
 
     qs = load_questions(Path(args.data_dir), args.ids)
@@ -47,7 +48,7 @@ def main():
     plain = [TokensPrompt(prompt_token_ids=p) for p in prompts]
 
     llm = LLM(model=args.model, dtype=args.dtype, seed=0, enable_prefix_caching=False,
-              async_scheduling=False, max_num_seqs=256, max_model_len=4096,
+              async_scheduling=False, max_num_seqs=args.max_num_seqs, max_model_len=4096,
               gpu_memory_utilization=0.85)
     res = {"n": len(qs),
            "prompt_tokens": sum(len(p) for p in prompts),

@@ -1,0 +1,45 @@
+{
+ "n": 1319,
+ "prompt_tokens": 138901,
+ "prefill_tokens": 509901,
+ "decode_tokens": 369637,
+ "decode_s": 437.8237638473511,
+ "prefill_s": {
+  "None": 39.32620930671692,
+  "1": 45.731948137283325,
+  "2": 45.862491607666016,
+  "20": 69.47760963439941
+ },
+ "ratio_prefill_over_decode": {
+  "None": 0.08982200728699631,
+  "1": 0.10445286874201726,
+  "2": 0.10475103316606667,
+  "20": 0.15868853034350838
+ },
+ "config": {
+  "vllm": "0.32.0",
+  "torch": "2.13.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "capability": [
+   8,
+   0
+  ],
+  "node": "j004-ds",
+  "slurm_job": "2276900",
+  "env": {
+   "CUDA_VISIBLE_DEVICES": "0",
+   "VLLM_BATCH_INVARIANT": "1"
+  },
+  "args": {
+   "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/dequant_fp32/qwen2.5-3b-instruct-Q8_0",
+   "parent_gen": "/net/spaces/jevans/klab/caroyf/outputs/ICML/truth/gsm8k_full_fp32_qwen2.5-3b_2273994/parent_gen/gen_A.jsonl",
+   "data_dir": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k",
+   "ids": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k/all_test_ids.json",
+   "out": "/net/spaces/jevans/klab/caroyf/outputs/ICML/cost/prefill_cost_fp32_Q8_0_bs32_n1319_NVIDIA_A100_80GB_PCIe_2276900.json",
+   "dtype": "float32",
+   "reps": 2,
+   "max_num_seqs": 32
+  }
+ }
+}
