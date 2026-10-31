@@ -1,0 +1,9 @@
+﻿..\full_truth tau=0.05 r=0.365 delta'=1.39e-03
+  Q8_0: true worst-slice theta = 0.012
+    net_ours floor 0.50 cost 0.554 | split cert 0.03 ucb 0.069 cov 1.000 | joint cert 0.00 ucb 0.090 cov 1.000
+    net_ours floor 0.60 cost 0.599 | split cert 0.27 ucb 0.055 cov 1.000 | joint cert 0.00 ucb 0.069 cov 1.000
+    net_ours floor 0.80 cost 0.688 | split cert 1.00 ucb 0.037 cov 1.000 | joint cert 0.96 ucb 0.041 cov 1.000
+  Q6_K: true worst-slice theta = 0.021
+    net_ours floor 0.50 cost 0.616 | split cert 0.00 ucb 0.109 cov 1.000 | joint cert 0.00 ucb 0.121 cov 1.000
+    net_ours floor 0.60 cost 0.698 | split cert 0.00 ucb 0.089 cov 1.000 | joint cert 0.00 ucb 0.095 cov 1.000
+    net_ours floor 0.80 cost 0.861 | split cert 0.15 ucb 0.056 cov 0.997 | joint cert 0.07 ucb 0.058 cov 1.000

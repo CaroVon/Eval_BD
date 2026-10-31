@@ -1,0 +1,12 @@
+{
+ "source": "RESULTS.md sec. 32, 36, 38: per-token r = (top-2 prefill s/token) / (decode s/token); mean decode batch from src/concurrency_sim.py on the measured decode wall time. A100 80GB, fp32, batch-invariant vLLM.",
+ "jobs": {"Qwen-3B Q8_0": "2277107, 2276900, 2277108, 2277109, 2274802", "Qwen-14B parent": "2281338-2281340, 2280619 (GSM8K truth run), 2281325 (MMLU-Pro truth run)", "Llama-8B parent": "2280621"},
+ "series": {
+  "Qwen-3B Q8_0": {"mean_batch": [16, 31, 61, 108, 172], "r": [0.038, 0.076, 0.140, 0.269, 0.365]},
+  "Qwen-14B parent": {"mean_batch": [15, 48, 49, 73, 100], "r": [0.062, 0.189, 0.163, 0.216, 0.31],
+                      "labels": ["", "", "MMLU-Pro", "", "GSM8K"],
+                      "note": "49 = MMLU-Pro truth run (KV-limited by long outputs); 100 = GSM8K truth run"},
+  "Llama-8B parent": {"mean_batch": [171], "r": [0.36]}
+ },
+ "kappa": {"Qwen-3B Q8_0": 0.0024, "Qwen-14B parent": 0.0040}
+}

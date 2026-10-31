@@ -82,11 +82,47 @@ candidate set B; exact screening shrinks it to g \ P n D, as it shrinks A.
 
 These two-point bounds are of the same order as the zero-harm bound. They do not explain the
 much higher rates (0.9-0.99) the simulations need when both sides carry many flips; that regime
-needs a variance-type lower bound (open).
+needs a variance-type lower bound (next section).
+
+## Variance-type lower bound (added 2026-11-01)
+
+Setting: one slice, uniform Poisson sampling at rate pi on A u B, fixed in advance. True counts are
+T_A = a and T_B = b, with theta_0 = (a - b)/N_g < tau, and m = ceil(tau N_g) - (a - b). For
+j in 0..m let M1_j be the uniform mixture over configurations with a + j harms on A and
+b - (m - j) repairs on B (theta >= tau), and M0 the uniform mixture over configurations with
+counts (a, b).
+
+**Proposition (mixture lower bound).** Let E = {UCB < tau} for a procedure valid at level delta_v
+for theta at every configuration. Suppose P_F(E) >= beta at every configuration F with counts
+(a, b). Then for every j, beta <= NP_j(pi), the largest P_M0(E') over events E' with
+P_M1_j(E') <= delta_v.
+*Proof.* Validity at every configuration of M1_j gives P_M1_j(E) <= delta_v. Averaging the
+precision condition gives P_M0(E) >= beta, and Neyman-Pearson bounds P_M0(E) by NP_j(pi).
+
+**Computation.** Under either mixture the flip positions are exchangeable given the sampled set,
+so (S_A, K_A, S_B, K_B) is sufficient: sampled units and sampled flips per side.
+- S ~ Bin(n, pi) on each side, identical under M0 and M1_j.
+- K | S is hypergeometric.
+- NP_j(pi) is computed exactly (randomised likelihood-ratio test). It is non-decreasing in pi,
+  since a lower rate can be simulated by subsampling.
+- `src/net_lower.py` reports max_j min{pi : NP_j(pi) >= 1/2} for the worst slice, with j in
+  {0, m/2, m}. Restricting j keeps the bound valid.
+
+**Result** (RESULTS.md sec. 42). At delta_v = delta', the lower bounds are about 70-90% of the
+floor the split certificate needs: GSM8K Q8_0 0.48 vs about 0.65, and MMLU-Pro Q6_K 0.86 vs
+about 0.97. So the high audit rates of the net certificate are mostly intrinsic to the flip counts,
+and not an artifact of the bound. Screening changes the bound by at most 0.03, because the
+non-flipped candidates carry almost no information. Its benefit is the lower cost per unit of
+audit rate.
+
+**A joint test does not help.** `src/net_joint.py` tests (a, b) with K_A - K_B, plus a small-delta
+upper bound on b. It is valid by the coupling of lemma 2 and its mirror, but on GSM8K it is looser
+than the split certificate. The difference statistic cannot exclude pairs with many repairs and
+large variance, so it needs the extra bound on b, and that bound costs as much as the split.
 
 ## Open questions
 
-- Variance-type lower bound when harm and repair counts are both large (the regime of the
-  simulations); the two-point bounds above only give the zero-flip rate.
+- The gap between the per-slice level delta' and the simultaneous level delta: lower bounds at
+  delta are 0.20-0.70. Closing it needs a procedure that is not Bonferroni over slices.
 - Joint design of pi on A and B (currently the zero-harm cover design with a floor).
 - Whether a correlated (paired) design across harm and repair candidates tightens the bound.

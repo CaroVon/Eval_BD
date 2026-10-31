@@ -12,8 +12,10 @@
 # Truth matrix + margin profiles for any parent on any dataset subset, in a mode whose
 # four-layer determinism check has already passed for this parent (see DECISIONS.md D10).
 # Stages are skipped when their output exists (resume after preemption).
-# Env: HFDIR, NAME (dequant prefix), DATASET, IDSFILE, TAG, EXTRA (e.g. --enforce-eager).
+# Env: HFDIR, NAME (dequant prefix), DATASET, IDSFILE, TAG, EXTRA (e.g. --enforce-eager),
+#      VERSIONS (default "Q8_0 Q6_K Q4_K_M Q3_K_M").
 set -euo pipefail
+VERSIONS=${VERSIONS:-Q8_0 Q6_K Q4_K_M Q3_K_M}
 K=/net/spaces/jevans/klab/caroyf
 export HF_HOME=$K/data/ICML/hf_cache
 export VLLM_BATCH_INVARIANT=1
@@ -34,12 +36,12 @@ if [ ! -s "$OUT/parent_gen/gen_A.jsonl" ]; then
     --dtype float32 --phases gen --tag A $EXTRA
 fi
 S="--parent-gen $OUT/parent_gen/gen_A.jsonl --data-dir $DATA --ids $IDS --out-dir $OUT/screen --dtype float32 --topk 2 $EXTRA"
-for M in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do
+for M in parent $VERSIONS; do
   [ -s "$OUT/screen/$M/summary.json" ] && continue
   if [ "$M" = parent ]; then MP=$PARENT; else MP=$CH-$M; fi
   python child_screen.py $S --name $M --model $MP
 done
-for M in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do
+for M in parent $VERSIONS; do
   [ -s "$OUT/margins/margins_$M.npz" ] && continue
   if [ "$M" = parent ]; then MP=$PARENT; else MP=$CH-$M; fi
   python margin_profile.py --model $MP --name $M --parent-gen $OUT/parent_gen/gen_A.jsonl \

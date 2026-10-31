@@ -1,0 +1,8 @@
+﻿..\mmlu_truth tau=0.05 target certify prob=0.5  (pi lower bound at level delta' / delta)
+  Q8_0 ours harm: pi >= 1.000 [all] at delta', 1.000 at delta
+  Q8_0 ours net: pi >= 0.691 [parent_len_q1of4] at delta', 0.446 at delta
+  Q8_0 B1   harm: pi >= 1.000 [all] at delta', 1.000 at delta
+  Q8_0 B1   net: pi >= 0.714 [parent_len_q1of4] at delta', 0.463 at delta
+  Q6_K ours harm: pi >= 1.000 [all] at delta', 1.000 at delta
+  Q6_K ours net: pi >= 0.863 [prompt_len_q2of4] at delta', 0.698 at delta
+  Q6_K B1   harm: pi >= 1.000 [all] at delta', 1.000 at delta

@@ -1,0 +1,9 @@
+﻿..\full_truth tau=0.05 target certify prob=0.5  (pi lower bound at level delta' / delta)
+  Q8_0 ours harm: pi >= 0.711 [prompt_len_q4of4] at delta', 0.387 at delta
+  Q8_0 ours net: pi >= 0.479 [parent_len_q3of4] at delta', 0.201 at delta
+  Q8_0 B1   harm: pi >= 0.730 [prompt_len_q4of4] at delta', 0.403 at delta
+  Q8_0 B1   net: pi >= 0.494 [parent_len_q3of4] at delta', 0.208 at delta
+  Q6_K ours harm: pi >= 1.000 [parent_len_q3of4] at delta', 1.000 at delta
+  Q6_K ours net: pi >= 0.662 [parent_len_q2of4] at delta', 0.337 at delta
+  Q6_K B1   harm: pi >= 1.000 [parent_len_q3of4] at delta', 1.000 at delta
+  Q6_K B1   net: pi >= 0.665 [parent_len_q2of4] at delta', 0.339 at delta
