@@ -921,14 +921,14 @@ non-divergent tail (continuation savings), not from cheap prefill.
 Full GSM8K (1,319), default server settings (`src/trackb_compare.py`; Track B quantities are
 relative to the Track B parent, bf16.gguf under llama.cpp):
 
-| | parent | Q8_0 | Q4_K_M | Q3_K_M |
-|---|---|---|---|---|
-| accuracy A / B | 82.4% / 82.3% | 83.0% / 82.0% | 79.5% / 79.5% | 47.8% / 44.2% |
-| \|A\|/\|P\| A / B | | 0.519 / **0.782** | 0.999 / 1.000 | 1.000 / 1.000 |
-| harm / repair A / B | | 19 / 27 / 33 / 30 | 104 / 65 / 93 / 56 | 503 / 46 / 528 / 26 |
-| per-question flip indicators agree | 130 differ (A vs B parent) | 92.9% | 85.1% | 63.4% |
-| flips in both tracks / flips in B | | 8 / 63 | 61 / 149 | 310 / 554 |
-| B per-token divergence hazard | | 0.0068 (A 0.0029) | 0.078 | 0.42 |
+| | parent | Q8_0 | Q6_K | Q4_K_M | Q3_K_M |
+|---|---|---|---|---|---|
+| accuracy A / B | 82.4% / 82.3% | 83.0% / 82.0% | 82.0% / 82.3% | 79.5% / 79.5% | 47.8% / 44.2% |
+| \|A\|/\|P\| A / B | | 0.519 / **0.782** | 0.902 / 0.946 | 0.999 / 1.000 | 1.000 / 1.000 |
+| harm / repair, A then B | | 19 / 27, 33 / 30 | 57 / 51, 55 / 55 | 104 / 65, 93 / 56 | 503 / 46, 528 / 26 |
+| per-question flip indicators agree | 130 differ (A vs B parent) | 92.9% | 87.6% | 85.1% | 63.4% |
+| flips in both tracks / flips in B | | 8 / 63 | 27 / 110 | 61 / 149 | 310 / 554 |
+| B per-token divergence hazard | | 0.0068 (A 0.0029) | 0.0153 | 0.078 | 0.42 |
 
 - **Track B screens worse.** Q8_0 |A|/|P| is 0.78 against 0.52 in Track A, since llama.cpp's Q8_0 noise
   relative to its own parent is about twice Track A's.
@@ -941,9 +941,6 @@ relative to the Track B parent, bf16.gguf under llama.cpp):
   divergence here is measured by comparing full outputs, since prefill screening is not valid in
   this engine (L3 above). This matches the plan's expectation for track B (E7): qualitatively
   consistent, with more non-determinism, and with question-level miss rates reported.
-
-Q6_K (Track B) is still running and will be added.
-
 ## Not yet measured
 
 Baselines B3-B5 (design-only variants, see sec. 35), a betting-based bound for B2, track B (deployed

@@ -23,6 +23,23 @@
   "t_star_median_B": 51.0,
   "rho_B": 0.006808505114491926
  },
+ "Q6_K": {
+  "acc_B": 0.8225928733889311,
+  "acc_A": 0.819560272934041,
+  "identical_to_B_parent": 67,
+  "identical_to_A_child": 3,
+  "A_over_P_B": 0.9456221198156682,
+  "A_over_P_A": 0.9015639374425023,
+  "harm_B": 55,
+  "repair_B": 55,
+  "harm_A": 57,
+  "repair_A": 51,
+  "flips_outside_D_B": 0,
+  "flip_agreement": 0.8756633813495072,
+  "both_flip": 27,
+  "t_star_median_B": 27.0,
+  "rho_B": 0.015288615354556667
+ },
  "Q4_K_M": {
   "acc_B": 0.7945413191811979,
   "acc_A": 0.7945413191811979,
