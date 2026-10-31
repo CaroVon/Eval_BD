@@ -972,7 +972,7 @@ Same setup as sec. 39 (default llama-server, bf16.gguf as the Track B parent).
 | harm / repair, A then B | | 22 / 24, 27 / 34 | 38 / 49, 37 / 54 |
 | flip indicators agree | | 96.3% | 96.4% |
 | flips in both tracks / flips in B | | 29 / 61 (Qwen-3B: 8 / 63) | 65 / 91 (Qwen-3B: 27 / 110) |
-| L3 continuation equal (200 questions) | 378 / 400 (17 questions) | see below | |
+| L3 continuation equal (200 questions) | 378 / 400 (17 questions) | 309 / 400 (67 questions; Qwen-3B 217 / 400) | |
 
 - **How far the deployed engine is from canonical execution depends on the model.** For Llama, bf16
   weights under llama.cpp reproduce the fp32 vLLM output on 89% of questions, against 0.5% for
@@ -980,8 +980,8 @@ Same setup as sec. 39 (default llama-server, bf16.gguf as the Track B parent).
   Llama, Track A is a reasonable proxy for the deployed artifact: 96% of flip indicators agree, and
   about half (Q8_0) to 70% (Q6_K) of deployed flips are also Track A flips. For Qwen it is not.
 - **Prefill/decode inconsistency is a property of the engine**, not of Qwen. Llama's bf16 parent
-  also fails L3 on 17 / 200 questions (Qwen 21 / 200). Exact screening therefore needs a canonical
-  execution for every family.
+  also fails L3 on 17 / 200 questions (Qwen 21 / 200), and its Q8_0 on 67 / 200 (Qwen 121 / 200).
+  Exact screening therefore needs a canonical execution for every family.
 
 ## Not yet measured
 
