@@ -157,3 +157,9 @@ for d in $O/ppl/*; do
   for f in $d/llamacpp_*.log; do grep -H "Final estimate" $f; done > $R/ppl/$b/llamacpp_final.txt 2>/dev/null || true
 done
 cp $K/data/ICML/datasets/wikitext2/meta.json $R/data/wikitext2_meta.json 2>/dev/null || true
+# Track B (llama.cpp) pilot: comparison summaries and continuation checks (outputs are small)
+for d in $O/trackb/*; do
+  [ -d "$d" ] || continue
+  b=$(basename $d); mkdir -p $R/trackb/$b
+  cp $d/trackb_compare.json $d/cont_*.jsonl $d/llamacpp_pin.txt $R/trackb/$b/ 2>/dev/null || true
+done

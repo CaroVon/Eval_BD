@@ -1,0 +1,26 @@
+{
+ "n": 200,
+ "parent": {
+  "acc_A": 0.785,
+  "acc_B": 0.79,
+  "identical_A_B": 2,
+  "answer_flips_B_vs_A": 21
+ },
+ "Q8_0": {
+  "acc_B": 0.81,
+  "acc_A": 0.79,
+  "identical_to_B_parent": 43,
+  "identical_to_A_child": 3,
+  "A_over_P_B": 0.7658227848101266,
+  "A_over_P_A": 0.47770700636942676,
+  "harm_B": 3,
+  "repair_B": 7,
+  "harm_A": 2,
+  "repair_A": 3,
+  "flips_outside_D_B": 0,
+  "flip_agreement": 0.935,
+  "both_flip": 1,
+  "t_star_median_B": 42.0,
+  "rho_B": 0.006455061261409423
+ }
+}

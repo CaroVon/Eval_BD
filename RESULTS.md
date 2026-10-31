@@ -868,6 +868,40 @@ b = 0.4 (B1 0.099, B6 0.094 with coverage 0.80, B2 0.109). The gain is small bec
 tau, and every method reaches the truth at b = 0.6. Measured r in the truth run: 0.34.
 Margin law, 36 cases now: all ratios 0.72-1.14.
 
+## 39. Track B pilot: the deployed GGUF under llama.cpp (Qwen2.5-3B, GSM8K; `scripts/trackb.sbatch`)
+
+llama-server from the pinned llama.cpp build: CUDA, all layers on an A100, one slot, n_ctx 4096,
+default settings (f16 KV cache), temperature 0. Prompts are the exact Track A token ids
+(`src/trackb_gen.py`). Continuation check: `src/trackb_cont.py`, same two cut points as L3.
+200-question determinism subset:
+
+| Check | bf16.gguf (parent) | Q8_0.gguf |
+|---|---|---|
+| L1: repeat run, identical outputs | 93 / 93 (overlap with the full run, different request order) | 200 / 200 |
+| L3: continuation from y[:t] equals y[t:] | 375 / 400 (21 / 200 questions differ) | **217 / 400** (121 / 200 questions differ) |
+| identical to the Track A (vLLM fp32) output of the same version | 2 / 200 (parent) | 3 / 200 |
+
+1. llama.cpp is repeatable for a fixed request but is **not prefill/decode consistent**. Feeding a
+   prefix as prompt and decoding gives a different continuation in 6% (bf16) and 46% (Q8_0) of cases.
+   For Q8_0 a likely cause is that prompt processing and single-token decoding take different
+   quantized-matmul paths. Lemma 3 assumes exactly this consistency, so exact screening (prefill the
+   parent output, read off the child's argmax) **cannot be applied to the deployed engine as is**.
+   This supports defining the certified object as the canonical batch-invariant execution (Track A,
+   plan sec. 2.2), where L3 holds with 0 / 400 differences.
+2. The engine itself changes the evaluation. The same bf16 weights under llama.cpp and under fp32
+   vLLM give identical outputs on only 2 / 200 questions, and 21 / 200 answers differ in
+   correctness (parent accuracy 79.0% vs 78.5%). Divergence occurs at parent margins up to 1.4
+   logits, a per-token hazard of about 0.031, comparable to Track A's low-bit versions rather than to
+   Q8_0 (0.003). Within
+   Track B, Q8_0 vs the bf16 parent: |A|/|P| 0.77 (Track A 0.48); harm / repair 3 / 7 (Track A 2 / 3).
+   Track A vs Track B flip indicators agree on 93.5% of questions.
+3. With section 37 (llama.cpp's Q8_0 adds about 1,000x the weight-only perplexity change for Qwen),
+   this means a Track A certificate is about the weight-quantized version under canonical execution.
+   It does not transfer to "the GGUF file as served". Any claim about deployed artifacts needs its own
+   execution definition.
+
+Full-GSM8K Track B runs for bf16, Q8_0, Q6_K, Q4_K_M and Q3_K_M are in progress (`outputs/ICML/trackb/qwen3b_gsm8k_full`).
+
 ## Not yet measured
 
 Baselines B3-B5 (design-only variants, see sec. 35), a betting-based bound for B2, track B (deployed

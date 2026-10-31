@@ -1,0 +1,1 @@
+eb4e244be77a906a183cd4a00fd51d9ad3200955 Thu Oct 29 18:23:29 2026 +0100 ROCm/HIP: add RDNA4_M family for gfx1170/gfx1171 (#31373)
