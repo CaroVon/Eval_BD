@@ -1074,12 +1074,58 @@ certificate at floors 0.5 / 0.6 / 0.7 / 0.8 / 0.9, GSM8K Q8_0: certified 0.04 / 
 - With exact per-side counts, splitting delta is close to the best simple choice. The remaining
   room is the 1.1-1.4x between the lower bound and the split certificate.
 
+## 43. imatrix ladder (Qwen2.5-3B, GSM8K 1,319; jobs 2283105, 2283849)
+
+Q6_K, Q4_K_M and Q3_K_M were re-quantized from the same bf16 GGUF with an importance matrix
+(`scripts/quant_imatrix.sbatch`). The matrix comes from `llama-imatrix` on the WikiText-2 train
+split (pinned revision b08601e, 200 chunks of 512 tokens, PPL 9.67), using the same pinned llama.cpp.
+Q8_0 ignores the imatrix, so the plain Q8_0 is used. The truth matrix comes from
+`scripts/truth_model.sbatch` with `VERSIONS="Q6_K Q4_K_M Q3_K_M"`, fp32, compiled mode.
+- The parent outputs are byte-identical to the earlier run on another node (j002-ds).
+- Lemma 3 has no violations.
+- The first quantize job (2282997) failed after 53 s with an empty log. The same script with `set -x`
+  completed, so the failure was transient.
+- The dequant MANIFEST records `imatrix: None`, because dequant_gguf.py does not see the flag. The
+  provenance is in `models/gguf/qwen2.5-3b-instruct-imat/imatrix_meta.txt`.
+
+| Version | median weight rel. err | acc | \|A\|/\|P\| | H / Rep | theta | t* median (D) | sigma | rho | law ratio (w = 0.1) |
+|---|---|---|---|---|---|---|---|---|---|
+| Q6_K plain | 0.0180 | 0.820 | 0.902 | 57 / 51 | +0.45% | 31 | 0.239 | 0.0101 | 0.88 |
+| Q6_K imat | 0.0181 | 0.829 | 0.878 | 44 / 51 | -0.53% | 42 | 0.208 | 0.0086 | 0.85 |
+| Q4_K_M plain | 0.0294 | 0.795 | 0.999 | 104 / 65 | +2.96% | 0 | 0.856 | 0.0304 | 0.74 |
+| Q4_K_M imat | 0.0302 | 0.801 | 0.995 | 89 / 59 | +2.27% | 13 | 0.590 | 0.0232 | 0.82 |
+| Q3_K_M plain | 0.0723 | 0.478 | 1.000 | 503 / 46 | +34.7% | 0 | 2.781 | 0.1497 | 1.12 |
+| Q3_K_M imat | 0.0742 | 0.645 | 1.000 | 286 / 50 | +17.9% | 2 | 1.535 | 0.0600 | 0.81 |
+
+(Parent accuracy 0.824. Plain Q8_0: sigma 0.074, |A|/|P| 0.519.)
+
+- **The imatrix lowers the margin noise without lowering weight error.** sigma falls by 13% (Q6_K),
+  31% (Q4_K_M) and 45% (Q3_K_M). The unweighted weight error rises slightly, because the imatrix
+  minimises activation-weighted error. This is a second case where sigma is not predicted by
+  weight error (sec. 26).
+- **The margin law holds for the new ladder** (ratios 0.81-0.85, within the 0.72-1.14 range). Q3_K_M,
+  which was not noise-like without the imatrix (ratio 1.12), becomes noise-like (0.81). There are
+  now 43 cases.
+- **Screening power barely moves.** With about 280 decode tokens, 1 - E[exp(-rho T)] is already
+  saturated for rho >= 0.008: |A|/|P| 0.902 -> 0.878 (Q6_K), 0.999 -> 0.995 (Q4_K_M). The visible
+  gain is later divergence: t* median 31 -> 42 for Q6_K and 0 -> 13 for Q4_K_M. Continuation saving
+  rises from 27% to 32% (Q6_K) and from 5% to 10% (Q4_K_M). So the imatrix moves Q6_K a little toward
+  the Q8_0 regime, but not into it.
+- **Certificates.** Harm certificate, worst slice, r = 0.076, same transfer source (phi) as sec. 35.
+  - Q6_K imat at b = 0.4: B1 / ours = 0.121 / 0.102 (plain 0.128 / 0.113).
+  - Q6_K imat at b = 0.6: B1 / ours = 0.092 / **0.060**, which is the exact H (plain 0.097 / 0.076).
+    The ratio rises from 1.28 to 1.53, so Q6_K imat meets G3 at b = 0.6 for Qwen-3B.
+  - At r = 0.365, ours is still looser than B1 for Q6_K (0.148 vs 0.120 at b = 0.4; 0.099 vs 0.093
+    at b = 0.6).
+  - The net change is negative for Q6_K imat (theta = -0.53%), but its worst-slice H is 0.060 > tau,
+    so a harm certificate cannot pass at tau = 0.05. Only the net certificate (sec. 15, 42) could.
+- Files: `results/imatrix/` (summaries, law ratios, baselines at r = 0.076 and 0.365).
+
 ## Not yet measured
 
 - A betting confidence sequence with adaptive bets for B2. The fixed-bet MGF bound (sec. 41) is
   already looser than B1, and B5 was not run separately.
 - Track B beyond Qwen-3B GSM8K (Llama-8B in progress). A certificate for the deployed engine would
   need its own execution definition, since L3 fails with batched prompt processing.
-- imatrix ladders.
-- Variance-type lower bound for the net certificate.
+- imatrix ladders for parents other than Qwen-3B, and on MMLU-Pro.
 - A larger parent in bf16 (fp32 limits the parent size to about 14B on one A100).

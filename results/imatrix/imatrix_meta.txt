@@ -1,0 +1,1 @@
+calibration=wikitext2/train.raw chunks=200 ctx=512 model=/net/spaces/jevans/klab/caroyf/data/ICML/models/gguf/qwen2.5-3b-instruct/bf16.gguf

@@ -1,0 +1,7 @@
+full_truth     Q8_0    sigma=0.074 rho=0.0029  w=0.05: ratio 0.79 [0.75,0.84]  w=0.1: ratio 0.81 [0.77,0.85]  w=0.2: ratio 0.82 [0.78,0.86]
+full_truth     Q6_K    sigma=0.239 rho=0.0101  w=0.05: ratio 0.87 [0.83,0.90]  w=0.1: ratio 0.88 [0.85,0.91]  w=0.2: ratio 0.90 [0.87,0.92]
+full_truth     Q4_K_M  sigma=0.856 rho=0.0304  w=0.05: ratio 0.72 [0.69,0.75]  w=0.1: ratio 0.74 [0.71,0.76]  w=0.2: ratio 0.75 [0.73,0.77]
+full_truth     Q3_K_M  sigma=2.781 rho=0.1497  w=0.05: ratio 1.10 [1.05,1.14]  w=0.1: ratio 1.12 [1.08,1.15]  w=0.2: ratio 1.14 [1.11,1.16]
+imat_truth     Q6_K    sigma=0.208 rho=0.0086  w=0.05: ratio 0.84 [0.81,0.88]  w=0.1: ratio 0.85 [0.83,0.88]  w=0.2: ratio 0.87 [0.85,0.90]
+imat_truth     Q4_K_M  sigma=0.590 rho=0.0232  w=0.05: ratio 0.80 [0.78,0.83]  w=0.1: ratio 0.82 [0.79,0.84]  w=0.2: ratio 0.83 [0.81,0.85]
+imat_truth     Q3_K_M  sigma=1.535 rho=0.0600  w=0.05: ratio 0.80 [0.77,0.83]  w=0.1: ratio 0.81 [0.79,0.84]  w=0.2: ratio 0.83 [0.81,0.85]
