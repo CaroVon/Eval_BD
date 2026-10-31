@@ -128,3 +128,24 @@ for q in Q8_0 Q6_K Q4_K_M Q3_K_M; do
   cp $K/data/ICML/models/dequant_fp32/qwen2.5-7b-instruct-$q/MANIFEST.json $R/manifests/fp32_qwen2.5-7b-instruct_$q.json 2>/dev/null || true
 done
 cp $K/data/ICML/models/hf/Qwen2.5-7B-Instruct/PINNED_REVISION.json $R/pins/qwen2.5-7b-instruct.json 2>/dev/null || true
+# qwen2.5-14b and llama-3.1-8b (eager)
+for d in $O/truth/*qwen14b* $O/truth/*llama8b*; do
+  [ -d "$d/screen" ] || continue
+  b=$(basename $d); mkdir -p $R/truth/$b
+  for m in parent Q8_0 Q6_K Q4_K_M Q3_K_M; do cp $d/screen/$m/summary.json $R/truth/$b/summary_$m.json 2>/dev/null || true; done
+  cp $d/divergence_classes.json $d/answer_margin.json $d/sim_*.json $d/eq_budget_*.json $d/*analysis.txt $R/truth/$b/ 2>/dev/null || true
+  cp $d/margins/analysis.json $R/truth/$b/margin_analysis.json 2>/dev/null || true
+  cp $d/margins/predict_D_*.json $R/truth/$b/ 2>/dev/null || true
+done
+for d in $O/detcheck/qwen14b* $O/detcheck/llama8b*; do
+  [ -d "$d" ] || continue
+  b=$(basename $d); mkdir -p $R/detcheck/$b; cp $d/report.json $d/run_*.json $R/detcheck/$b/ 2>/dev/null || true
+done
+for m in qwen2.5-14b-instruct llama-3.1-8b-instruct; do
+  for q in Q8_0 Q6_K Q4_K_M Q3_K_M; do
+    cp $K/data/ICML/models/dequant_fp32/$m-$q/MANIFEST.json $R/manifests/fp32_${m}_$q.json 2>/dev/null || true
+  done
+done
+cp $K/data/ICML/models/hf/Qwen2.5-14B-Instruct/PINNED_REVISION.json $R/pins/qwen2.5-14b-instruct.json 2>/dev/null || true
+cp $K/data/ICML/models/hf/Llama-3.1-8B-Instruct/PINNED_REVISION.json $R/pins/llama-3.1-8b-instruct.json 2>/dev/null || true
+cp $O/law_robustness_*.json $R/ 2>/dev/null || true

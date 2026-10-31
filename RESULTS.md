@@ -572,6 +572,8 @@ over questions (200 resamples). Values for w = 0.1:
 | Phi-3.5-mini / GSM8K | 0.91 [0.86, 0.97] | 0.94 [0.90, 0.99] | 0.80 [0.77, 0.84] | 0.90 [0.86, 0.93] |
 | Phi-3.5-mini / MMLU-Pro | 0.83 [0.79, 0.87] | 0.90 [0.87, 0.93] | 0.81 [0.79, 0.83] | 0.87 [0.85, 0.90] |
 | SmolLM2-1.7B / GSM8K | 0.94 [0.89, 0.98] | 0.92 [0.89, 0.95] | 0.98 [0.95, 1.02] | 1.06 [1.03, 1.09] |
+| Qwen2.5-14B / GSM8K (sec. 33) | 0.87 [0.81, 0.94] | 0.91 [0.88, 0.95] | 0.85 [0.82, 0.89] | 0.88 [0.86, 0.91] |
+| Llama-3.1-8B / GSM8K (sec. 34) | 0.89 [0.83, 0.94] | 0.83 [0.80, 0.86] | 0.80 [0.77, 0.82] | 0.85 [0.83, 0.88] |
 
 All 20 ratios lie in 0.72-1.14 (median about 0.90). The window w (0.05, 0.1, 0.2) changes them by
 at most 0.03. The intervals are narrow and most ratios are below 1, so the Gaussian law
@@ -668,6 +670,75 @@ Same 1,319 prefill sequences and decodes; only max_num_seqs changes.
 Decode time halves with each doubling of the batch up to 128 (bandwidth-bound) and improves only
 26% from 128 to 256 (approaching compute-bound); prefill time does not depend on the decode batch.
 From 16 to 128 sequences, r is roughly proportional to the batch (0.0019-0.0024 per sequence).
+
+Correction (2026-10-31, `src/concurrency_sim.py`): replaying the scheduler for these runs gives a
+nearly constant time per decode step, 37.8 / 37.0 / 38.7 / 35.6 / 42.0 ms at caps 16 / 32 / 64 /
+128 / 256 (mean batches 16 / 31 / 61 / 108 / 172). Reading 12.3 GB of fp32 weights in 37 ms is
+about 330 GB/s, a sixth of the A100's HBM bandwidth, so the decode step is not HBM-bound: its cost
+is a fixed per-step cost of the batch-invariant engine. The "bandwidth-bound" wording above and in
+sec. 30 should be read as "fixed per-step cost". The conclusion is unchanged and gets a simpler form:
+r ~ B_eff x (prefill seconds per token) / (seconds per decode step), with B_eff the mean decode batch.
+
+## 33. Qwen2.5-14B-Instruct truth matrix (GSM8K 1,319, fp32, eager, A100; job 2280619)
+
+Parent @ cf98f3b (Apache-2.0). Four-layer check passes in eager mode (L1-L4: 0 differences on 200
+questions). In fp32 the weights take about 59 GB, leaving a KV cache of 27,760 tokens (about 6.8
+sequences of 4,096). Decoding matches vLLM text on 1,319/1,319. Dequantization error (median per
+tensor): Q8_0 0.54%, Q6_K 1.79%, Q4_K_M 2.84%, Q3_K_M 7.17%.
+
+| Version | Child acc. | \|A\|/\|P\| (7B / 3B) | harm / repair | sigma (7B) | lemma 3 violations | t\* median |
+|---|---|---|---|---|---|---|
+| Q8_0 | 91.7% | **0.398** (0.317 / 0.519) | 8 / 6 | 0.053 (0.055) | 0 | 71 |
+| Q6_K | 91.3% | 0.800 (0.691 / 0.902) | 18 / 10 | 0.167 (0.17) | 0 | 41 |
+| Q4_K_M | 92.0% | 0.977 (0.947 / 0.999) | 24 / 26 | 0.45 (0.53) | 0 | 17 |
+| Q3_K_M | 90.1% | 0.998 (0.994 / 1.000) | 47 / 23 | 0.89 (1.0) | 0 | 10 |
+
+Parent accuracy 91.9%. No flips outside D, no ties. The 14B parent screens worse than 7B, so
+"larger screens better" (sec. 31) was too coarse: sigma_q stops shrinking between 7B and 14B (Q8_0
+0.055 -> 0.053), while the 14B parent has more near-ties (share of positions with margin < 0.1:
+1.05%, f_m(0) about 0.105, vs 0.078 for 7B) at the same output length (271 vs 270 tokens). The
+margin law accounts for the difference: observed / predicted 0.87 / 0.91 / 0.85 / 0.88 (Q8 / Q6 /
+Q4 / Q3; w = 0.1). Screening power follows the parent's near-tie density, not parameter count.
+Predictor (50 questions): Q8_0 0.414 vs 0.399, Q6_K 0.781 vs 0.802.
+
+Divergences: 72-83% word choices; 80% re-sync within 30 tokens (Q8_0); 97% of Q8_0 divergences keep
+the answer. Harms come with high parent answer margins (7 of the 8 Q8_0 harms at answer margin >= 8;
+the 8th output has no detected answer span), i.e. from upstream drift (as sec. 18).
+
+Measured cost in the truth run (eager, KV-limited): r = 0.31 (decode 437 s, top-2 prefill 189 s for
+Q8_0). Replaying the scheduler (`src/concurrency_sim.py`) gives a mean decode batch of about 100 and
+about 117 ms per step: the 28k-token KV cache still holds about 100 short GSM8K sequences, so this is
+not a small-batch regime. Equal budget at r = 0.365, Q8_0 (true worst-slice H / theta 0.015 /
+0.012): harm certificate at b = 0.6 is 0.028 (screening) vs 0.043 (B1), at b = 0.8 exact (0.015)
+vs 0.028; net at b = 0.8 exact (0.012) vs 0.032. At r = 0.076 screening is exact at b = 0.4 for both
+(B1 0.063 / 0.073). Q6_K gains only at r = 0.076 (harm 0.045 vs 0.069 at b = 0.6).
+
+## 34. Fourth family: Llama-3.1-8B-Instruct truth matrix (GSM8K 1,319, fp32, eager, A100; job 2280621)
+
+Parent @ 0e9e39f (Llama 3.1 Community License; gated, access granted to the user's account).
+Four-layer check passes in eager mode. KV cache 145,232 tokens, so the decode batch reaches the cap of
+256. Decoding matches vLLM text on 1,319/1,319. Dequantization error (median): Q8_0 0.54%, Q6_K 1.80%,
+Q4_K_M 7.18%, Q3_K_M 7.30% (Q4_K_M error is much higher than for Qwen, 2-3%).
+
+| Version | Child acc. | \|A\|/\|P\| | harm / repair | sigma | lemma 3 violations | t\* median |
+|---|---|---|---|---|---|---|
+| Q8_0 | 82.9% | **0.420** | 22 / 24 | 0.050 | 0 | 60 |
+| Q6_K | 83.6% | 0.788 | 38 / 49 | 0.170 | 0 | 38 |
+| Q4_K_M | 82.3% | 0.983 | 70 / 64 | 0.48 | 0 | 23 |
+| Q3_K_M | 80.7% | 0.998 | 91 / 63 | 0.86 | 0 | 14 |
+
+Parent accuracy 82.8%. One parent question has an exact tie (resolved by the smallest-id rule, no
+violations); no flips outside D. f_m(0) about 0.137 (share < 0.1: 1.37%), the highest of all GSM8K
+parents, which explains |A|/|P| despite the smallest sigma. Margin law: observed / predicted 0.89 /
+0.83 / 0.80 / 0.85. Flips are close to symmetric and repair-heavy for Q6_K (38 / 49), so the
+harm certificate is loose and the net certificate is the useful one: at r = 0.076, Q8_0 net bound is
+exact (0.006) at b = 0.6 vs 0.058 for B1, and 0.020 at b = 0.4 vs 0.094; Q6_K net is exact (0.000) at
+b = 0.8 vs 0.043. At r = 0.365 (the truth run measured r = 0.36 at batch 256) screening wins only
+for Q8_0 at b >= 0.6. 85% of Q8_0 divergences keep the answer (Qwen-14B 97%); Llama's first
+divergences include list formatting ("Step" | "1").
+
+With these two parents the margin law covers 32 parent x task x version cases; all ratios lie in
+0.72-1.14 and the median is about 0.89 (`results/law_robustness_q14_l8.json`).
 
 ## Not yet measured
 

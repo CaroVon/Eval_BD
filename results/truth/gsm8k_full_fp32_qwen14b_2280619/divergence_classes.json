@@ -1,0 +1,78 @@
+{
+ "Q8_0": {
+  "n_D": 532,
+  "classes": {
+   "word": 385,
+   "split": 48,
+   "punct/markup": 76,
+   "space/newline": 13,
+   "opener": 1,
+   "digit": 9
+  },
+  "same_answer": 0.9699248120300752,
+  "resync": 0.8007518796992481,
+  "A": 482,
+  "A_resync": 387,
+  "A_resync_harm": 8,
+  "A_nores_same": 95,
+  "A_nores_changed": 0,
+  "A_harm": 8
+ },
+ "Q6_K": {
+  "n_D": 1062,
+  "classes": {
+   "word": 796,
+   "punct/markup": 141,
+   "split": 88,
+   "opener": 5,
+   "digit": 28,
+   "space/newline": 4
+  },
+  "same_answer": 0.9651600753295668,
+  "resync": 0.8088512241054614,
+  "A": 970,
+  "A_resync": 787,
+  "A_resync_harm": 14,
+  "A_nores_same": 179,
+  "A_nores_changed": 4,
+  "A_harm": 18
+ },
+ "Q4_K_M": {
+  "n_D": 1290,
+  "classes": {
+   "word": 1005,
+   "opener": 65,
+   "punct/markup": 130,
+   "split": 75,
+   "digit": 11,
+   "space/newline": 4
+  },
+  "same_answer": 0.9534883720930233,
+  "resync": 0.7728682170542636,
+  "A": 1184,
+  "A_resync": 913,
+  "A_resync_harm": 20,
+  "A_nores_same": 267,
+  "A_nores_changed": 4,
+  "A_harm": 24
+ },
+ "Q3_K_M": {
+  "n_D": 1317,
+  "classes": {
+   "word": 1093,
+   "split": 57,
+   "opener": 44,
+   "punct/markup": 106,
+   "digit": 16,
+   "space/newline": 1
+  },
+  "same_answer": 0.9347000759301443,
+  "resync": 0.7053910402429765,
+  "A": 1210,
+  "A_resync": 855,
+  "A_resync_harm": 33,
+  "A_nores_same": 341,
+  "A_nores_changed": 14,
+  "A_harm": 47
+ }
+}

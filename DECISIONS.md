@@ -79,3 +79,11 @@ HuggingFaceTB/SmolLM2-1.7B-Instruct @ 31b70e2 (Apache-2.0, llama architecture) a
 and Qwen/Qwen2.5-7B-Instruct @ a09a354 (Apache-2.0) to test model scale within the Qwen family and
 the prefill/decode cost ratio at 7B. Both run in eager mode after their own four-layer check
 (D10). Like D8, these are not the plan's final parent choices.
+
+## D12 (2026-10-30) Qwen2.5-14B and Llama-3.1-8B as further exploratory parents
+Qwen/Qwen2.5-14B-Instruct @ cf98f3b (Apache-2.0) tests scale beyond 7B and a KV-limited decode
+batch (fp32 weights about 59 GB on an 80 GB A100). meta-llama/Llama-3.1-8B-Instruct @ 0e9e39f
+(Llama 3.1 Community License, gated; access granted to the user's HF account) is a fourth family.
+Both use the same llama.cpp ladder without imatrix, fp32 dequantization and eager mode after their own
+four-layer check. The HF token is kept in ~/.config/huggingface/token (HF_TOKEN_PATH), outside the
+group-readable project space. Exploratory, like D8 and D11.
