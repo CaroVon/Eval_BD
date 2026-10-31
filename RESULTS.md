@@ -848,6 +848,26 @@ all layers on an A100. HF = dequantized fp32 safetensors under transformers (Tra
    GSM8K questions (|A|/|P| 0.519). Version comparison by perplexity says little about
    finite-population answer flips.
 
+## 38. MMLU-Pro pilot (1,000) for Llama-3.1-8B (job 2281326) and Qwen-14B (job 2281325), fp32, eager
+
+Llama-3.1-8B: parent accuracy 49.3%, mean output 425 tokens. The local decoder matches vLLM's text on
+999 / 1,000 outputs (used only by the text-class analyses).
+
+| Version | Child acc. | \|A\|/\|P\| | harm / repair | sigma | law obs/pred | lemma 3 violations | t\* median |
+|---|---|---|---|---|---|---|---|
+| Q8_0 | 48.9% | **0.696** | 50 / 46 | 0.058 | 0.86 | 0 | 81 |
+| Q6_K | 50.3% | 0.935 | 71 / 81 | 0.19 | 0.85 | 0 | 40 |
+| Q4_K_M | 48.2% | 0.996 | 108 / 97 | 0.54 | 0.85 | 0 | 18 |
+| Q3_K_M | 44.4% | 1.000 | 128 / 79 | 0.91 | 0.88 | 0 | 11 |
+
+No flips outside D; one parent-side tie in the Q6_K run (resolved, no rule violations). f_m(0) is
+about 0.18 (1.79% of margins < 0.1), the highest of all pairs, and the outputs are long, so screening
+is weak. Divergences change the answer often (Q8_0: 68% keep it, vs 85% on GSM8K). Flips are close to
+symmetric. Equal budget (harm, true worst-slice H 0.088 for Q8_0): at r = 0.076 screening is exact at
+b = 0.4 (B1 0.099, B6 0.094 with coverage 0.80, B2 0.109). The gain is small because H is far above
+tau, and every method reaches the truth at b = 0.6. Measured r in the truth run: 0.34.
+Margin law, 36 cases now: all ratios 0.72-1.14.
+
 ## Not yet measured
 
 Baselines B3-B5 (design-only variants, see sec. 35), a betting-based bound for B2, track B (deployed
