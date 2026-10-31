@@ -959,6 +959,30 @@ relative to the Track B parent, bf16.gguf under llama.cpp):
   divergence here is measured by comparing full outputs, since prefill screening is not valid in
   this engine (L3 above). This matches the plan's expectation for track B (E7): qualitatively
   consistent, with more non-determinism, and with question-level miss rates reported.
+## 40. Track B for Llama-3.1-8B (GSM8K 1,319; jobs 2281961-2281963, 2282007-2282008)
+
+Same setup as sec. 39 (default llama-server, bf16.gguf as the Track B parent).
+
+| | parent | Q8_0 | Q6_K |
+|---|---|---|---|
+| accuracy A / B | 82.8% / 82.8% | 82.9% / 83.3% | 83.6% / 84.1% |
+| outputs identical to Track A (same version) | **1,180 / 1,319** (Qwen-3B: 6) | 713 | 731 |
+| correctness differs A vs B | 12 (Qwen-3B: 130) | | |
+| \|A\|/\|P\| A / B | | 0.420 / 0.526 | 0.788 / 0.799 |
+| harm / repair, A then B | | 22 / 24, 27 / 34 | 38 / 49, 37 / 54 |
+| flip indicators agree | | 96.3% | 96.4% |
+| flips in both tracks / flips in B | | 29 / 61 (Qwen-3B: 8 / 63) | 65 / 91 (Qwen-3B: 27 / 110) |
+| L3 continuation equal (200 questions) | 378 / 400 (17 questions) | see below | |
+
+- **How far the deployed engine is from canonical execution depends on the model.** For Llama, bf16
+  weights under llama.cpp reproduce the fp32 vLLM output on 89% of questions, against 0.5% for
+  Qwen2.5-3B. The perplexity gaps say the same (sec. 37: Llama +0.06% at Q8_0, Qwen +0.24%). For
+  Llama, Track A is a reasonable proxy for the deployed artifact: 96% of flip indicators agree, and
+  about half (Q8_0) to 70% (Q6_K) of deployed flips are also Track A flips. For Qwen it is not.
+- **Prefill/decode inconsistency is a property of the engine**, not of Qwen. Llama's bf16 parent
+  also fails L3 on 17 / 200 questions (Qwen 21 / 200). Exact screening therefore needs a canonical
+  execution for every family.
+
 ## Not yet measured
 
 - Baselines B3-B5 (design-only variants, see sec. 35) and a betting-based bound for B2.
