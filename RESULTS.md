@@ -818,8 +818,35 @@ scheduler (`src/concurrency_sim.py`) on the measured decode wall time.
    14B at batch 16 as 0.064 (measured 0.062).
 3. B_eff = min(cap, KV tokens / mean sequence occupancy). Qwen-14B fp32 on an 80 GB A100 holds 28k
    KV tokens, i.e. about 100 short GSM8K sequences, which gives r of about 0.3. Small r needs long
-   outputs (MMLU-Pro, sec. 37), a smaller KV budget or a deliberately small batch, not just a larger
+   outputs (MMLU-Pro, sec. 38), a smaller KV budget or a deliberately small batch, not just a larger
    model.
+
+## 37. Perplexity check of the dequantized models (`scripts/ppl_check.sbatch`, `src/ppl_hf.py`)
+
+WikiText-2 raw test (Salesforce/wikitext @ b08601e), n_ctx 512, llama-perplexity's chunking and
+scoring (second half of each chunk) reproduced in `ppl_hf.py`. llama.cpp @ the pinned build, CUDA,
+all layers on an A100. HF = dequantized fp32 safetensors under transformers (Track A weights).
+
+| Version | Qwen-3B llama.cpp | Qwen-3B HF (Track A) | gap | Llama-8B llama.cpp | Llama-8B HF | gap |
+|---|---|---|---|---|---|---|
+| parent (bf16.gguf vs HF) | 8.9550 | 8.9549 | 0.00% | 7.1948 | 7.1947 | 0.00% |
+| Q8_0 | 8.9767 | 8.9549 | +0.24% | 7.2026 | 7.1982 | +0.06% |
+| Q6_K | 9.0423 | 9.0180 | +0.27% | 7.2291 | 7.2280 | +0.02% |
+| Q4_K_M | 9.4857 | 9.4539 | +0.34% | 7.4033 | 7.3952 | +0.11% |
+| Q3_K_M | 15.532 | 16.251 | -4.4% | 7.8623 | 7.8540 | +0.11% |
+
+1. The pipeline is faithful: the parents agree to 1e-4 with the same token count (298,938 / 288,937)
+   and chunk count, so tokenization, chunking and scoring match llama.cpp exactly.
+2. Track A isolates weight quantization, and deployed GGUF inference adds more error. The most
+   likely source is that llama.cpp's quantized CUDA matmul paths (MMQ / MMVQ) also quantize the
+   activations to 8 bits (q8_1); the fp32 dequantized model does not. This is not verified from this
+   build's logs. For Qwen-3B Q8_0, weight quantization alone moves perplexity by 0.0002% (8.95486 -> 8.95488),
+   while the deployed GGUF moves it by 0.24%, a thousand times more. Llama-8B is much less sensitive
+   (+0.05% vs +0.11%). So a Track A certificate is about the weight-quantized version, and Track B can
+   show more divergence and more flips than Track A, especially for Qwen.
+3. Perplexity barely registers Q8_0 even though the token-level outputs diverge on half of the Qwen-3B
+   GSM8K questions (|A|/|P| 0.519). Version comparison by perplexity says little about
+   finite-population answer flips.
 
 ## Not yet measured
 

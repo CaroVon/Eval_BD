@@ -1,0 +1,12 @@
+{
+ "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/dequant_fp32/qwen2.5-3b-instruct-Q3_K_M",
+ "tokens": 298938,
+ "chunks": 583,
+ "n_ctx": 512,
+ "add_bos": false,
+ "scored": 148665,
+ "nll": 2.788139155278857,
+ "ppl": 16.25075152305307,
+ "dtype": "float32",
+ "seconds": 117.8672125339508
+}

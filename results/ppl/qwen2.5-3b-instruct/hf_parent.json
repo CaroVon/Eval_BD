@@ -1,0 +1,12 @@
+{
+ "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/hf/Qwen2.5-3B-Instruct",
+ "tokens": 298938,
+ "chunks": 583,
+ "n_ctx": 512,
+ "add_bos": false,
+ "scored": 148665,
+ "nll": 2.1921960050569864,
+ "ppl": 8.954856448419909,
+ "dtype": "float32",
+ "seconds": 116.94244050979614
+}

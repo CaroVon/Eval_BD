@@ -1,0 +1,5 @@
+/net/spaces/jevans/klab/caroyf/outputs/ICML/ppl/llama-3.1-8b-instruct/llamacpp_parent.log:1.29.088.000 I Final estimate: PPL = 7.1948 +/- 0.04564
+/net/spaces/jevans/klab/caroyf/outputs/ICML/ppl/llama-3.1-8b-instruct/llamacpp_Q3_K_M.log:1.52.379.305 I Final estimate: PPL = 7.8623 +/- 0.05013
+/net/spaces/jevans/klab/caroyf/outputs/ICML/ppl/llama-3.1-8b-instruct/llamacpp_Q4_K_M.log:1.33.553.638 I Final estimate: PPL = 7.4033 +/- 0.04708
+/net/spaces/jevans/klab/caroyf/outputs/ICML/ppl/llama-3.1-8b-instruct/llamacpp_Q6_K.log:1.45.550.359 I Final estimate: PPL = 7.2291 +/- 0.04593
+/net/spaces/jevans/klab/caroyf/outputs/ICML/ppl/llama-3.1-8b-instruct/llamacpp_Q8_0.log:1.45.428.268 I Final estimate: PPL = 7.2026 +/- 0.04570

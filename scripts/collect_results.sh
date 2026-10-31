@@ -149,3 +149,11 @@ done
 cp $K/data/ICML/models/hf/Qwen2.5-14B-Instruct/PINNED_REVISION.json $R/pins/qwen2.5-14b-instruct.json 2>/dev/null || true
 cp $K/data/ICML/models/hf/Llama-3.1-8B-Instruct/PINNED_REVISION.json $R/pins/llama-3.1-8b-instruct.json 2>/dev/null || true
 cp $O/law_robustness_*.json $R/ 2>/dev/null || true
+# perplexity check (WikiText-2): HF results and llama.cpp final estimates
+for d in $O/ppl/*; do
+  [ -d "$d" ] || continue
+  b=$(basename $d); mkdir -p $R/ppl/$b
+  cp $d/hf_*.json $R/ppl/$b/ 2>/dev/null || true
+  for f in $d/llamacpp_*.log; do grep -H "Final estimate" $f; done > $R/ppl/$b/llamacpp_final.txt 2>/dev/null || true
+done
+cp $K/data/ICML/datasets/wikitext2/meta.json $R/data/wikitext2_meta.json 2>/dev/null || true

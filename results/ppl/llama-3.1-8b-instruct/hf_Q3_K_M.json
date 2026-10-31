@@ -1,0 +1,12 @@
+{
+ "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/dequant_fp32/llama-3.1-8b-instruct-Q3_K_M",
+ "tokens": 288937,
+ "chunks": 564,
+ "n_ctx": 512,
+ "add_bos": true,
+ "scored": 143820,
+ "nll": 2.0610218466646133,
+ "ppl": 7.853991286060913,
+ "dtype": "float32",
+ "seconds": 258.37261843681335
+}

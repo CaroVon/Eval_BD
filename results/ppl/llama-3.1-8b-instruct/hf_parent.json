@@ -1,0 +1,12 @@
+{
+ "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/hf/Llama-3.1-8B-Instruct",
+ "tokens": 288937,
+ "chunks": 564,
+ "n_ctx": 512,
+ "add_bos": true,
+ "scored": 143820,
+ "nll": 1.973342480034179,
+ "ppl": 7.194684432024935,
+ "dtype": "float32",
+ "seconds": 256.94784283638
+}
