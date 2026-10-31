@@ -1,0 +1,56 @@
+{
+ "name": "Q6_K",
+ "n": 1000,
+ "acc_parent": 0.493,
+ "acc_child": 0.503,
+ "D_frac": 0.962,
+ "A_over_P": 0.9350912778904665,
+ "harm_flips_in_P": 71,
+ "repair_flips": 81,
+ "flips_outside_D": 0,
+ "lemma3a_violations": 0,
+ "lemma3b_violations": 0,
+ "questions_with_ties": 1,
+ "tie_positions": 1,
+ "tie_rule_violations": 0,
+ "topk_saturated_positions": 1,
+ "A_over_P_conservative": 0.9350912778904665,
+ "t_star_median": 40,
+ "decode_tokens_full": 428668,
+ "decode_tokens_cont": 362386,
+ "prefill_tokens": 679309,
+ "seconds": {
+  "full_s": 259.9769432544708,
+  "prefill_s": 140.92101526260376,
+  "cont_s": 249.35203099250793
+ },
+ "config": {
+  "vllm": "0.32.0",
+  "torch": "2.13.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "capability": [
+   8,
+   0
+  ],
+  "node": "h001",
+  "slurm_job": "2281326",
+  "env": {
+   "CUDA_VISIBLE_DEVICES": "0",
+   "VLLM_BATCH_INVARIANT": "1"
+  },
+  "args": {
+   "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/dequant_fp32/llama-3.1-8b-instruct-Q6_K",
+   "name": "Q6_K",
+   "parent_gen": "/net/spaces/jevans/klab/caroyf/outputs/ICML/truth/mmlupro_pilot1000_fp32_llama8b_eager_2281326/parent_gen/gen_A.jsonl",
+   "data_dir": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/mmlu_pro",
+   "ids": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/mmlu_pro/pilot_1000_ids.json",
+   "out_dir": "/net/spaces/jevans/klab/caroyf/outputs/ICML/truth/mmlupro_pilot1000_fp32_llama8b_eager_2281326/screen",
+   "max_tokens": 1024,
+   "max_num_seqs": 256,
+   "topk": 2,
+   "dtype": "float32",
+   "enforce_eager": true
+  }
+ }
+}

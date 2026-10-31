@@ -795,6 +795,32 @@ at most k - 1 audits in a worst-case slice certificate. B2 uses Bernstein; a bet
 finite-population confidence sequence would be tighter, but it remains bounded by the same
 candidate-set argument.
 
+## 36. What sets r: a fixed cost per decode step (cost only; jobs 2281338-2281341)
+
+Per-token r = (top-2 prefill s/token) / (decode s/token). The time per step comes from replaying the
+scheduler (`src/concurrency_sim.py`) on the measured decode wall time.
+
+| Model (mode) | questions | cap | mean decode batch | ms / step | r |
+|---|---|---|---|---|---|
+| Qwen-3B Q8_0 (compiled) | 1,319 | 16 / 32 / 64 / 128 / 256 | 16 / 31 / 61 / 108 / 172 | 37.8 / 37.0 / 38.7 / 35.6 / 42.0 | 0.038 / 0.076 / 0.140 / 0.269 / 0.365 |
+| Qwen-3B Q8_0 (eager) | 1,319 | 32 | 31 | 39.0 | 0.072 |
+| Qwen-14B parent (eager) | 200 | 16 / 64 / 256 | 15 / 48 / 73 (KV-limited, 310 preemptions) | 92 / 94 / 113 | 0.062 / 0.189 / 0.216 |
+| Qwen-14B parent (eager, truth run) | 1,319 | 256 | about 100 (KV-limited) | 117 | 0.31 |
+| Llama-8B parent (eager, truth run) | 1,319 | 256 | 171 | 87 | 0.36 |
+
+1. The time per decode step hardly depends on the batch (3B: 36-42 ms from 16 to 256 sequences;
+   14B: 92-113 ms). Compiled mode (CUDA graphs) saves only 6% over eager, so the step cost is GPU
+   kernel time, not CPU launch overhead. 3B reads its 12.3 GB of fp32 weights in about 37 ms (about
+   330 GB/s, a sixth of HBM bandwidth), so the step is bound by the batch-invariant matmul kernels at
+   small M. It is neither HBM-bound nor compute-bound.
+2. Hence **r ~ kappa x B_eff**, with kappa = (prefill s/token) / (s/step): 0.0024 for Qwen-3B and
+   0.0040 for Qwen-14B (prefill cost grows with parameters faster than step cost). This predicts
+   14B at batch 16 as 0.064 (measured 0.062).
+3. B_eff = min(cap, KV tokens / mean sequence occupancy). Qwen-14B fp32 on an 80 GB A100 holds 28k
+   KV tokens, i.e. about 100 short GSM8K sequences, which gives r of about 0.3. Small r needs long
+   outputs (MMLU-Pro, sec. 37), a smaller KV budget or a deliberately small batch, not just a larger
+   model.
+
 ## Not yet measured
 
 Baselines B3-B5 (design-only variants, see sec. 35), a betting-based bound for B2, track B (deployed
