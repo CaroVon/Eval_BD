@@ -740,8 +740,62 @@ divergences include list formatting ("Step" | "1").
 With these two parents the margin law covers 32 parent x task x version cases; all ratios lie in
 0.72-1.14 and the median is about 0.89 (`results/law_robustness_q14_l8.json`).
 
+## 35. Baselines B2 and B6 at equal compute (`src/baselines.py`)
+
+Harm certificate, worst slice over the 9 GSM8K slices (or MMLU-Pro length slices), simultaneous over
+4 versions x slices (delta' = 1.4e-3). Each method spends the same expected compute b (fraction of a
+full evaluation of that version); B1 and ours as in sec. 23, the new methods with uniform Poisson
+sampling on their candidate set.
+
+- **B6** (common practice): Horvitz-Thompson estimate on g n P plus a CLT interval with Bonferroni.
+  Asymptotic, so its coverage is reported.
+- **B2** (PPI / AIPW): AIPW on g n P with a predictor from parent signals only, f_i = q x P(i in D).
+  P(i in D) comes from the margin law with sigma fitted on 50 questions (sec. 17); q is the
+  flip-given-divergence rate transferred from another parent's truth matrix. Finite-sample bound from
+  Bernstein's inequality (variance bounded by T + sum f^2, solved in closed form).
+- **B2s**: the same AIPW bound on the screened set A = g n P n D with f_i = q, paying the prefill.
+  This is PPI on top of exact screening.
+
+Q8_0, mean worst-slice UCB (B6 coverage in brackets), r = 0.076:
+
+| Parent / task | true H | b = 0.4: B1 / ours / B2 / B2s / B6 | b = 0.6: B1 / ours / B2 / B2s / B6 |
+|---|---|---|---|
+| Qwen-3B GSM8K | 0.029 | 0.078 / **0.029** / 0.101 / 0.029 / 0.061 [0.30] | 0.054 / **0.029** / 0.066 / 0.029 / 0.046 [0.74] |
+| Qwen-7B GSM8K | 0.026 | 0.075 / **0.026** / 0.101 / 0.026 / 0.055 [0.12] | 0.054 / **0.026** / 0.066 / 0.026 / 0.043 [0.32] |
+| Qwen-14B GSM8K | 0.015 | 0.063 / **0.015** / 0.093 / 0.015 / 0.042 [0.29] | 0.043 / **0.015** / 0.058 / 0.015 / 0.031 [0.60] |
+| Llama-8B GSM8K | 0.030 | 0.078 / **0.030** / 0.101 / 0.030 / 0.062 [0.41] | 0.054 / **0.030** / 0.065 / 0.030 / 0.046 [0.72] |
+| Phi-3.5 GSM8K | 0.051 | 0.108 / **0.051** / 0.133 / 0.051 / 0.092 [0.67] | 0.082 / **0.051** / 0.095 / 0.051 / 0.074 [0.85] |
+| Qwen-3B MMLU-Pro | 0.084 | 0.092 / **0.084** / 0.103 / 0.084 / 0.088 [0.75] | all 0.084 |
+
+At r = 0.365 and b = 0.6, Q8_0: B1 / ours = 0.053 / 0.032 (Qwen-3B), 0.054 / 0.026 (7B), 0.043 / 0.028
+(14B), 0.054 / 0.030 (Llama), 0.082 / 0.051 (Phi). At b = 0.4 and r = 0.365, B1 is better than ours
+everywhere except Qwen-3B MMLU-Pro (0.084 vs 0.091). For Qwen-14B the prefill alone exceeds the
+budget.
+
+What this shows:
+1. **B2 is looser than B1 in every case**: 0.093-0.133 vs 0.063-0.108 at b = 0.4. A predictor from
+   parent signals carries little information about harm (flips are about 3-7% of divergent
+   questions). The finite-sample AIPW bound must pay for the 1/pi range of its terms, which costs more
+   than the exact binomial inversion of theorem 4. B2s never beats ours (equal at best). This matches
+   the plan's expectation that B2-B5 cannot beat the lower bound set by the candidate-set size for
+   worst-slice certificates; only exact information shrinks the candidate set.
+2. **B6 is narrower than B1 only because it is invalid.** Its simultaneous coverage is 0.12-0.74 at
+   b = 0.4-0.6 for Q8_0 (target 0.95). The CLT interval collapses to 0 when a slice's sample has no
+   flips. Even so, ours is narrower than B6 whenever the screened certificate is exact.
+3. **G3 (>= 1.5x over the strongest valid baseline, B1).** UCB ratio B1 / ours for Q8_0:
+   - At r = 0.076, b = 0.4: 2.7 (Qwen-3B), 2.9 (7B), 4.2 (14B), 2.6 (Llama), 2.1 (Phi).
+   - At r = 0.365, b = 0.6: 1.66, 2.08, 1.54, 1.80, 1.61.
+   - Q6_K at r = 0.076, b = 0.6: 1.28 (Qwen-3B), 1.70 (7B), 1.53 (14B), 1.48 (Llama), 1.62 (Phi).
+4. SmolLM2 and some MMLU-Pro cells are equal for every method. Parent accuracy is low there, so the
+   harm candidates (parent-correct questions) can all be audited within the budget.
+
+Not simulated: B3 (active inference), B4 (cost-optimal active evaluation) and B5 (FAQ / PAI). They
+change only the sampling design. Under note 2 of the plan, tilting inclusion probabilities can save
+at most k - 1 audits in a worst-case slice certificate. B2 uses Bernstein; a betting-based
+finite-population confidence sequence would be tighter, but it remains bounded by the same
+candidate-set argument.
+
 ## Not yet measured
 
-Remaining baselines (B2-B6), track B (deployed GGUF kernels), perplexity check of the dequantized
-models, imatrix ladders, truth matrices at batch sizes where decoding is bandwidth-bound for a
-larger parent, variance-type lower bound for the net certificate.
+Baselines B3-B5 (design-only variants, see sec. 35), a betting-based bound for B2, track B (deployed
+GGUF kernels), imatrix ladders, variance-type lower bound for the net certificate.
