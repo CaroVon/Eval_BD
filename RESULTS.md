@@ -900,6 +900,24 @@ default settings (f16 KV cache), temperature 0. Prompts are the exact Track A to
    It does not transfer to "the GGUF file as served". Any claim about deployed artifacts needs its own
    execution definition.
 
+Control: micro-batch 1 (`SERVER_EXTRA="-b 64 -ub 1"`, Q8_0, same 200 questions). Every prompt
+token now goes through the same single-token kernels as decoding:
+
+| | default (batched prompt) | micro-batch 1 |
+|---|---|---|
+| L3 continuation equal | 217 / 400 | **400 / 400** |
+| prompt processing, ms / token | 0.23-0.39 | 4.3 |
+| decode (one stream), ms / token | 6.4-6.8 | (same path) |
+| accuracy (200) | 81.0% | 79.0% |
+
+Outputs under the two settings are identical on only 43 / 200 questions. So the batched prompt path
+is the source of the inconsistency, and what a GGUF "answers" depends on the server's micro-batch
+setting. llama.cpp can be made prefill/decode consistent, but consistent prefill then costs about
+0.65 of a decode step per token (r of about 0.65 at one stream), against 0.04-0.06 for the
+inconsistent batched path. For deployed llama.cpp at batch 1, exact screening would have to pay
+nearly decode cost for its prefill. Its benefit there would come only from skipping the
+non-divergent tail (continuation savings), not from cheap prefill.
+
 Full-GSM8K Track B runs for bf16, Q8_0, Q6_K, Q4_K_M and Q3_K_M are in progress (`outputs/ICML/trackb/qwen3b_gsm8k_full`).
 
 ## Not yet measured

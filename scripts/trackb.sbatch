@@ -12,7 +12,8 @@
 # Track B pilot: greedy outputs of the deployed GGUF under llama.cpp (llama-server, one slot, CUDA),
 # with the Track A prompt ids, for comparison with the Track A truth matrix (src/trackb_gen.py).
 # Output per version is appended question by question; a requeued job resumes.
-# Env: NAME (gguf dir), HFDIR, VERSIONS (space-separated, may include bf16), DATASET, IDSFILE, TAG.
+# Env: NAME (gguf dir), HFDIR, VERSIONS (space-separated, may include bf16), DATASET, IDSFILE, TAG,
+#      SERVER_EXTRA (extra llama-server flags, e.g. "-b 1 -ub 1").
 set -euo pipefail
 K=/net/spaces/jevans/klab/caroyf
 export HF_HOME=$K/data/ICML/hf_cache
@@ -34,7 +35,7 @@ for V in ${VERSIONS:?}; do
   N=$(python -c "import json;print(len(json.load(open('$IDS'))))")
   if [ -s "$OUT/gen_$V.jsonl" ] && [ "$(wc -l < "$OUT/gen_$V.jsonl")" -ge "$N" ]; then continue; fi
   "$LC/build/bin/llama-server" -m "$G/$V.gguf" -ngl 99 -c 4096 -np 1 --port $PORT --host 127.0.0.1 \
-    --seed 0 > "$OUT/server_$V.log" 2>&1 &
+    --seed 0 ${SERVER_EXTRA:-} > "$OUT/server_$V.log" 2>&1 &
   SP=$!
   for i in $(seq 120); do
     curl -sf http://127.0.0.1:$PORT/health > /dev/null && break

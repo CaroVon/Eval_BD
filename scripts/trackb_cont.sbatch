@@ -26,7 +26,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda-13.1/lib64:${LD_LIBRARY_PATH:-}
 PORT=$((20000 + SLURM_JOB_ID % 20000))
 for V in ${VERSIONS:?}; do
   "$LC/build/bin/llama-server" -m "$G/$V.gguf" -ngl 99 -c 4096 -np 1 --port $PORT --host 127.0.0.1 \
-    --seed 0 > "$OUT/server_cont_$V.log" 2>&1 &
+    --seed 0 ${SERVER_EXTRA:-} > "$OUT/server_cont_$V.log" 2>&1 &
   SP=$!
   for i in $(seq 120); do curl -sf http://127.0.0.1:$PORT/health > /dev/null && break; sleep 2; done
   python trackb_cont.py --port $PORT --model-dir "$HF" --data-dir "$DATA" --ids "$IDS" \
