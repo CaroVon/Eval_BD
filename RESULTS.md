@@ -868,6 +868,24 @@ b = 0.4 (B1 0.099, B6 0.094 with coverage 0.80, B2 0.109). The gain is small bec
 tau, and every method reaches the truth at b = 0.6. Measured r in the truth run: 0.34.
 Margin law, 36 cases now: all ratios 0.72-1.14.
 
+Qwen2.5-14B (job 2281325, 3 h 51 min): parent accuracy 65.4%, mean output 442 tokens, decoding
+matches vLLM text on 1,000 / 1,000.
+
+| Version | Child acc. | \|A\|/\|P\| (Qwen-3B) | harm / repair | sigma | law obs/pred | lemma 3 violations | t\* median |
+|---|---|---|---|---|---|---|---|
+| Q8_0 | 64.9% | **0.740** (0.756) | 42 / 37 | 0.053 | 0.95 | 0 | 93 |
+| Q6_K | 65.9% | 0.957 (0.98) | 53 / 58 | 0.17 | 0.95 | 0 | 43 |
+| Q4_K_M | 64.5% | 0.997 | 64 / 55 | 0.45 | 0.92 | 0 | 19 |
+| Q3_K_M | 63.2% | 0.998 | 89 / 67 | 0.89 | 0.87 | 0 | 10 |
+
+f_m(0) is about 0.20 (2.0% of margins < 0.1), so screening power on MMLU-Pro is no better than at 3B.
+Long outputs shrink the decode batch: replaying the scheduler gives a mean batch of 49 in the
+28k-token KV cache (1,896 preemptions), and the measured **r = 0.16**, half the GSM8K value (0.31).
+This is the first truth matrix where memory forces a small batch on its own. At that r, Q8_0 harm
+(true worst-slice H 0.087): screening 0.117 vs B1 0.140 at b = 0.4, and exact at b = 0.6 (B1 0.094).
+B6 at b = 0.4 gives 0.127 with coverage 0.76, B2 0.164. At r = 0.076 screening is exact at b = 0.4,
+and the net certificate is 0.069 vs 0.124 (B1) at b = 0.6. Margin law, 40 cases: all ratios 0.72-1.14.
+
 ## 39. Track B pilot: the deployed GGUF under llama.cpp (Qwen2.5-3B, GSM8K; `scripts/trackb.sbatch`)
 
 llama-server from the pinned llama.cpp build: CUDA, all layers on an A100, one slot, n_ctx 4096,

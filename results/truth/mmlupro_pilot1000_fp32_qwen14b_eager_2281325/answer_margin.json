@@ -1,0 +1,180 @@
+{
+ "bins": [
+  0,
+  0.5,
+  1,
+  2,
+  4,
+  8
+ ],
+ "versions": {
+  "Q8_0": [
+   {
+    "n": 7,
+    "n_P": 3,
+    "n_notP": 4,
+    "harm_rate": 0.6666666666666666,
+    "repair_rate": 0.25,
+    "harm": 2,
+    "repair": 1
+   },
+   {
+    "n": 6,
+    "n_P": 1,
+    "n_notP": 5,
+    "harm_rate": 0.0,
+    "repair_rate": 0.4,
+    "harm": 0,
+    "repair": 2
+   },
+   {
+    "n": 15,
+    "n_P": 3,
+    "n_notP": 12,
+    "harm_rate": 0.3333333333333333,
+    "repair_rate": 0.4166666666666667,
+    "harm": 1,
+    "repair": 5
+   },
+   {
+    "n": 19,
+    "n_P": 12,
+    "n_notP": 7,
+    "harm_rate": 0.16666666666666666,
+    "repair_rate": 0.14285714285714285,
+    "harm": 2,
+    "repair": 1
+   },
+   {
+    "n": 47,
+    "n_P": 17,
+    "n_notP": 30,
+    "harm_rate": 0.17647058823529413,
+    "repair_rate": 0.06666666666666667,
+    "harm": 3,
+    "repair": 2
+   },
+   {
+    "n": 871,
+    "n_P": 616,
+    "n_notP": 255,
+    "harm_rate": 0.05357142857142857,
+    "repair_rate": 0.09803921568627451,
+    "harm": 33,
+    "repair": 25
+   }
+  ],
+  "Q6_K": [
+   {
+    "n": 7,
+    "n_P": 3,
+    "n_notP": 4,
+    "harm_rate": 0.3333333333333333,
+    "repair_rate": 0.0,
+    "harm": 1,
+    "repair": 0
+   },
+   {
+    "n": 6,
+    "n_P": 1,
+    "n_notP": 5,
+    "harm_rate": 1.0,
+    "repair_rate": 0.4,
+    "harm": 1,
+    "repair": 2
+   },
+   {
+    "n": 15,
+    "n_P": 3,
+    "n_notP": 12,
+    "harm_rate": 0.3333333333333333,
+    "repair_rate": 0.3333333333333333,
+    "harm": 1,
+    "repair": 4
+   },
+   {
+    "n": 19,
+    "n_P": 12,
+    "n_notP": 7,
+    "harm_rate": 0.3333333333333333,
+    "repair_rate": 0.2857142857142857,
+    "harm": 4,
+    "repair": 2
+   },
+   {
+    "n": 47,
+    "n_P": 17,
+    "n_notP": 30,
+    "harm_rate": 0.23529411764705882,
+    "repair_rate": 0.2,
+    "harm": 4,
+    "repair": 6
+   },
+   {
+    "n": 871,
+    "n_P": 616,
+    "n_notP": 255,
+    "harm_rate": 0.06655844155844155,
+    "repair_rate": 0.14901960784313725,
+    "harm": 41,
+    "repair": 38
+   }
+  ],
+  "Q4_K_M": [
+   {
+    "n": 7,
+    "n_P": 3,
+    "n_notP": 4,
+    "harm_rate": 0.3333333333333333,
+    "repair_rate": 0.0,
+    "harm": 1,
+    "repair": 0
+   },
+   {
+    "n": 6,
+    "n_P": 1,
+    "n_notP": 5,
+    "harm_rate": 0.0,
+    "repair_rate": 0.2,
+    "harm": 0,
+    "repair": 1
+   },
+   {
+    "n": 15,
+    "n_P": 3,
+    "n_notP": 12,
+    "harm_rate": 0.3333333333333333,
+    "repair_rate": 0.25,
+    "harm": 1,
+    "repair": 3
+   },
+   {
+    "n": 19,
+    "n_P": 12,
+    "n_notP": 7,
+    "harm_rate": 0.5,
+    "repair_rate": 0.2857142857142857,
+    "harm": 6,
+    "repair": 2
+   },
+   {
+    "n": 47,
+    "n_P": 17,
+    "n_notP": 30,
+    "harm_rate": 0.4117647058823529,
+    "repair_rate": 0.1,
+    "harm": 7,
+    "repair": 3
+   },
+   {
+    "n": 871,
+    "n_P": 616,
+    "n_notP": 255,
+    "harm_rate": 0.07792207792207792,
+    "repair_rate": 0.16862745098039217,
+    "harm": 48,
+    "repair": 43
+   }
+  ]
+ }
+}
