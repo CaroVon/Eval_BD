@@ -961,5 +961,9 @@ relative to the Track B parent, bf16.gguf under llama.cpp):
   consistent, with more non-determinism, and with question-level miss rates reported.
 ## Not yet measured
 
-Baselines B3-B5 (design-only variants, see sec. 35), a betting-based bound for B2, track B (deployed
-GGUF kernels), imatrix ladders, variance-type lower bound for the net certificate.
+- Baselines B3-B5 (design-only variants, see sec. 35) and a betting-based bound for B2.
+- Track B beyond Qwen-3B GSM8K (Llama-8B in progress). A certificate for the deployed engine would
+  need its own execution definition, since L3 fails with batched prompt processing.
+- imatrix ladders.
+- Variance-type lower bound for the net certificate.
+- A larger parent in bf16 (fp32 limits the parent size to about 14B on one A100).
