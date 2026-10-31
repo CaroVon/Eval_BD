@@ -1047,7 +1047,9 @@ Figures: `results/figures/{margin_law,cost_law,baselines_q8,break_even}.pdf`, ge
 | MMLU-Pro Q6_K | net, screened | 0.86 (0.70) | about 0.97 |
 
 Harm certificates are impossible (lower bound 1) wherever the true worst-slice H >= tau: GSM8K
-Q6_K, and MMLU-Pro Q8_0 and Q6_K. Without screening the bounds are 0.01-0.03 higher.
+Q6_K, and MMLU-Pro Q8_0 and Q6_K. Without screening the bounds are 0.00-0.02 higher. Split
+certificate at floors 0.5 / 0.6 / 0.7 / 0.8 / 0.9, GSM8K Q8_0: certified 0.04 / 0.32 / 0.78 / 0.99 /
+1.00 (1,000 reps, `results/net/net_joint_gsm8k_qwen2.5-3b.txt`).
 
 1. **The high audit rate is mostly intrinsic.**
    - Any procedure at the same per-slice level needs at least 70-90% of the rate our split

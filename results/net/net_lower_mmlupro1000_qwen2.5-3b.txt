@@ -6,3 +6,4 @@
   Q6_K ours harm: pi >= 1.000 [all] at delta', 1.000 at delta
   Q6_K ours net: pi >= 0.863 [prompt_len_q2of4] at delta', 0.698 at delta
   Q6_K B1   harm: pi >= 1.000 [all] at delta', 1.000 at delta
+  Q6_K B1   net: pi >= 0.865 [prompt_len_q2of4] at delta', 0.699 at delta

@@ -1,0 +1,189 @@
+{
+ "truth": "..\\full_truth",
+ "tau": 0.05,
+ "delta_prime": 0.001388888888888889,
+ "r": 0.365,
+ "reps": 1000,
+ "rows": [
+  {
+   "version": "Q8_0",
+   "method": "net_ours",
+   "floor": 0.5,
+   "true_theta": 0.012048192771084338,
+   "split": {
+    "cost_over_full": 0.5544853280602168,
+    "coverage": 1.0,
+    "certified_rate": 0.037,
+    "worst_ucb_mean": 0.06955010586925019
+   },
+   "joint": {
+    "cost_over_full": 0.5544853280602168,
+    "coverage": 1.0,
+    "certified_rate": 0.0,
+    "worst_ucb_mean": 0.09069192648166419
+   }
+  },
+  {
+   "version": "Q8_0",
+   "method": "net_ours",
+   "floor": 0.6,
+   "true_theta": 0.012048192771084338,
+   "split": {
+    "cost_over_full": 0.5989900171854239,
+    "coverage": 1.0,
+    "certified_rate": 0.315,
+    "worst_ucb_mean": 0.05527960554111077
+   },
+   "joint": {
+    "cost_over_full": 0.5989900171854239,
+    "coverage": 1.0,
+    "certified_rate": 0.003,
+    "worst_ucb_mean": 0.06915604670502287
+   }
+  },
+  {
+   "version": "Q8_0",
+   "method": "net_ours",
+   "floor": 0.7,
+   "true_theta": 0.012048192771084338,
+   "split": {
+    "cost_over_full": 0.6434947063106309,
+    "coverage": 1.0,
+    "certified_rate": 0.776,
+    "worst_ucb_mean": 0.04393822524477482
+   },
+   "joint": {
+    "cost_over_full": 0.6434947063106309,
+    "coverage": 1.0,
+    "certified_rate": 0.339,
+    "worst_ucb_mean": 0.05324940352351384
+   }
+  },
+  {
+   "version": "Q8_0",
+   "method": "net_ours",
+   "floor": 0.8,
+   "true_theta": 0.012048192771084338,
+   "split": {
+    "cost_over_full": 0.687999395435838,
+    "coverage": 1.0,
+    "certified_rate": 0.994,
+    "worst_ucb_mean": 0.036706198705191186
+   },
+   "joint": {
+    "cost_over_full": 0.687999395435838,
+    "coverage": 1.0,
+    "certified_rate": 0.968,
+    "worst_ucb_mean": 0.041266182864714396
+   }
+  },
+  {
+   "version": "Q8_0",
+   "method": "net_ours",
+   "floor": 0.9,
+   "true_theta": 0.012048192771084338,
+   "split": {
+    "cost_over_full": 0.7325040845610451,
+    "coverage": 1.0,
+    "certified_rate": 1.0,
+    "worst_ucb_mean": 0.0282842743523112
+   },
+   "joint": {
+    "cost_over_full": 0.7325040845610451,
+    "coverage": 1.0,
+    "certified_rate": 1.0,
+    "worst_ucb_mean": 0.029789215686274514
+   }
+  },
+  {
+   "version": "Q6_K",
+   "method": "net_ours",
+   "floor": 0.5,
+   "true_theta": 0.02147239263803681,
+   "split": {
+    "cost_over_full": 0.616045756285943,
+    "coverage": 1.0,
+    "certified_rate": 0.0,
+    "worst_ucb_mean": 0.10835541800308753
+   },
+   "joint": {
+    "cost_over_full": 0.616045756285943,
+    "coverage": 1.0,
+    "certified_rate": 0.0,
+    "worst_ucb_mean": 0.12059249669247334
+   }
+  },
+  {
+   "version": "Q6_K",
+   "method": "net_ours",
+   "floor": 0.6,
+   "true_theta": 0.02147239263803681,
+   "split": {
+    "cost_over_full": 0.6975554820068746,
+    "coverage": 1.0,
+    "certified_rate": 0.0,
+    "worst_ucb_mean": 0.08814929582486383
+   },
+   "joint": {
+    "cost_over_full": 0.6975554820068746,
+    "coverage": 1.0,
+    "certified_rate": 0.0,
+    "worst_ucb_mean": 0.09461328585068712
+   }
+  },
+  {
+   "version": "Q6_K",
+   "method": "net_ours",
+   "floor": 0.7,
+   "true_theta": 0.02147239263803681,
+   "split": {
+    "cost_over_full": 0.7790652077278061,
+    "coverage": 1.0,
+    "certified_rate": 0.003,
+    "worst_ucb_mean": 0.07133291001688839
+   },
+   "joint": {
+    "cost_over_full": 0.7790652077278061,
+    "coverage": 1.0,
+    "certified_rate": 0.0,
+    "worst_ucb_mean": 0.07481543028378035
+   }
+  },
+  {
+   "version": "Q6_K",
+   "method": "net_ours",
+   "floor": 0.8,
+   "true_theta": 0.02147239263803681,
+   "split": {
+    "cost_over_full": 0.8605749334487378,
+    "coverage": 0.998,
+    "certified_rate": 0.151,
+    "worst_ucb_mean": 0.055988214128583666
+   },
+   "joint": {
+    "cost_over_full": 0.8605749334487378,
+    "coverage": 0.999,
+    "certified_rate": 0.056,
+    "worst_ucb_mean": 0.05789293788567256
+   }
+  },
+  {
+   "version": "Q6_K",
+   "method": "net_ours",
+   "floor": 0.9,
+   "true_theta": 0.02147239263803681,
+   "split": {
+    "cost_over_full": 0.9420846591696693,
+    "coverage": 0.999,
+    "certified_rate": 0.992,
+    "worst_ucb_mean": 0.042100974595263324
+   },
+   "joint": {
+    "cost_over_full": 0.9420846591696693,
+    "coverage": 1.0,
+    "certified_rate": 0.992,
+    "worst_ucb_mean": 0.0430463628233468
+   }
+  }
+ ]
+}
