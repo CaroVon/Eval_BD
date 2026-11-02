@@ -1138,6 +1138,37 @@ is copied by hand.
   method audits it completely at b = 0.4.
 - Figures were regenerated: the margin law now has 43 cases and a 20-colour palette.
 
+## 45. imatrix ladder on MMLU-Pro (Qwen2.5-3B, pilot 1,000; job 2291668, 51 min)
+
+Same imatrix quants as sec. 43 and the same 1,000 ids as sec. 10, in compiled mode.
+- The parent outputs are byte-identical to sec. 10.
+- No flips fall outside D, and lemma 3b holds.
+
+| Version | acc | \|A\|/\|P\| | H / Rep | theta | t* median | saving | sigma | law ratio (w = 0.1) |
+|---|---|---|---|---|---|---|---|---|
+| Q6_K plain | 0.445 | 0.980 | 84 / 83 | +0.10% | 34 | 12.5% | 0.213 | 0.91 |
+| Q6_K imat | 0.440 | 0.964 | 80 / 74 | +0.60% | 36 | 14.9% | 0.195 | 0.86 |
+| Q4_K_M plain | 0.430 | 1.000 | 102 / 86 | +1.60% | 15 | 4.2% | 0.682 | 0.83 |
+| Q4_K_M imat | 0.430 | 0.998 | 97 / 81 | +1.60% | 18 | 5.9% | 0.504 | 0.84 |
+| Q3_K_M plain | 0.239 | 1.000 | 279 / 72 | +20.7% | 1 | 1.5% | 2.166 | 1.05 |
+| Q3_K_M imat | 0.342 | 1.000 | 194 / 90 | +10.4% | 4 | 1.7% | 1.265 | 0.88 |
+
+- **sigma falls by 8% (Q6_K), 26% (Q4_K_M) and 42% (Q3_K_M).** That is about the same as on GSM8K,
+  so the effect of the imatrix on margin noise does not depend on the task. The calibration text
+  (WikiText-2) matches neither task.
+- **The margin law holds** (ratios 0.84-0.88). It now has 46 cases.
+- **Screening power still barely moves (|A|/|P| 0.980 -> 0.964 for Q6_K).** The expectation that
+  MMLU-Pro is less saturated was wrong. Its outputs are longer (parent mean 466 tokens vs 281) and its
+  parent near-tie density is higher (f_m(0) 0.19 vs 0.12), so rho T is larger and the saturation
+  is stronger.
+- **Certificates are unchanged.** Q6_K worst slice true H = 0.120. At r = 0.076 and b = 0.2 the
+  bounds are B1 0.212 vs ours 0.205 (plain 0.213 / 0.209). From b = 0.4 on, every method reaches the
+  exact H.
+- **Conclusion for the claim:** at these output lengths, the imatrix improves quality (Q3_K_M) and
+  noise, but only moves the screening regime at the margin. It helps where rho T is near 1
+  (GSM8K Q6_K, sec. 43), and does not help where rho T >> 1.
+- Files: `results/imatrix/mmlupro_*`; frozen tables and figures regenerated (sec. 44).
+
 ## Not yet measured
 
 - A betting confidence sequence with adaptive bets for B2. The fixed-bet MGF bound (sec. 41) is

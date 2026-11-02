@@ -50,6 +50,10 @@ fp32, batch-invariant vLLM, A100; llama.cpp ladder dequantized to fp32 (Track A)
 | Qwen2.5-3B GSM8K imatrix | 1319 | 0.824 | Q6_K | 0.829 | 0.878 | 44 / 51 | -0.53% | 0 | 0 |
 | Qwen2.5-3B GSM8K imatrix | 1319 | 0.824 | Q4_K_M | 0.801 | 0.995 | 89 / 59 | +2.27% | 0 | 0 |
 | Qwen2.5-3B GSM8K imatrix | 1319 | 0.824 | Q3_K_M | 0.645 | 1.000 | 286 / 50 | +17.89% | 0 | 0 |
+| Qwen2.5-3B MMLU-Pro 1k imatrix | 1000 | 0.446 | Q8_0 | 0.439 | 0.756 | 53 / 46 | +0.70% | 0 | 0 |
+| Qwen2.5-3B MMLU-Pro 1k imatrix | 1000 | 0.446 | Q6_K | 0.440 | 0.964 | 80 / 74 | +0.60% | 0 | 0 |
+| Qwen2.5-3B MMLU-Pro 1k imatrix | 1000 | 0.446 | Q4_K_M | 0.430 | 0.998 | 97 / 81 | +1.60% | 0 | 0 |
+| Qwen2.5-3B MMLU-Pro 1k imatrix | 1000 | 0.446 | Q3_K_M | 0.342 | 1.000 | 194 / 90 | +10.40% | 0 | 0 |
 
 ## Table 2. Worst-slice harm UCB at equal compute (delta' = 1.4e-3, mean over reps)
 
@@ -78,6 +82,7 @@ Cells: B1 / ours / best other valid baseline (name), ratio = min(B1, other) / ou
 | Phi-3.5-mini MMLU-Pro 1k | Q8_0 | 0.080 | 0.109 / 0.080 / 0.112 (B2m), 1.37 | 0.080 / 0.080 / 0.080 (B2m), 1.00 | 0.080 / 0.080 / 0.080 (B2m), 1.00 |
 | Phi-3.5-mini MMLU-Pro 1k | Q6_K | 0.128 | 0.162 / 0.147 / 0.160 (B3), 1.09 | 0.128 / 0.128 / 0.128 (B2), 1.00 | 0.128 / 0.128 / 0.128 (B2), 1.00 |
 | Qwen2.5-3B GSM8K imatrix | Q6_K | 0.060 | 0.121 / 0.102 / 0.144 (B2), 1.19 | 0.092 / 0.060 / 0.105 (B2), **1.53** | 0.093 / 0.099 / 0.105 (B2), 0.94 |
+| Qwen2.5-3B MMLU-Pro 1k imatrix | Q6_K | 0.120 | 0.120 / 0.120 / 0.120 (B2), 1.00 | 0.120 / 0.120 / 0.120 (B2), 1.00 | 0.120 / 0.120 / 0.120 (B2), 1.00 |
 
 ## Figures
 

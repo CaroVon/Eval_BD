@@ -1,0 +1,1 @@
+parent=Qwen2.5-3B-Instruct dataset=mmlu_pro ids=pilot_1000_ids.json extra= restart=0

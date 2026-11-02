@@ -26,6 +26,7 @@ TRUTH = [
     ("Llama-3.1-8B MMLU-Pro 1k", "l8m_truth", "mmlupro1000_llama-3.1-8b"),
     ("Phi-3.5-mini MMLU-Pro 1k", "phim_truth", "mmlupro1000_phi-3.5-mini"),
     ("Qwen2.5-3B GSM8K imatrix", "imat4_truth", None),
+    ("Qwen2.5-3B MMLU-Pro 1k imatrix", "mimat4_truth", None),
 ]
 OTHER = ["B2", "B2m", "B3", "B4"]
 SETTINGS = [(0.076, 0.4), (0.076, 0.6), (0.365, 0.6)]
