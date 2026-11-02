@@ -1169,6 +1169,76 @@ Same imatrix quants as sec. 43 and the same 1,000 ids as sec. 10, in compiled mo
   (GSM8K Q6_K, sec. 43), and does not help where rho T >> 1.
 - Files: `results/imatrix/mmlupro_*`; frozen tables and figures regenerated (sec. 44).
 
+## 46. G2 as defined in plan v4.0 (`src/g2_check.py`, exact, no Monte Carlo)
+
+The G2 gate: on slices with N_g >= 500, the uniform certificate at tau = 0.05 needs an audit rate
+(inclusion probability) of at most 0.5.
+- Slices: 'all' plus quantile bins of parent and prompt length with N_g >= 500. That gives 5 slices
+  for GSM8K (633-1,319) and 3-5 for MMLU-Pro 1k. delta' = 0.05 / (4 versions x slices).
+- Required rate: the smallest pi with P(T_U(K) <= floor(tau N_g)) >= 1/2 at the true harm count.
+  K ~ Bin(T, pi) is exact, and the fast criterion was checked against `tu_table` on 300 random cases.
+
+| Parent (GSM8K) | Q8_0 pi (audited share ours / B1) | Q6_K pi | G2 |
+|---|---|---|---|
+| Qwen2.5-3B | 0.453 (0.205 / 0.341) | H >= tau on 2 slices | pass (Q8_0) |
+| Qwen2.5-7B | 0.307 (0.097 / 0.256) | 0.688 | pass (Q8_0) |
+| Qwen2.5-14B | 0.264 (0.106 / 0.236) | 0.453 (0.340 / 0.404) | pass (Q8_0, Q6_K) |
+| Llama-3.1-8B | 0.548 (0.204 / 0.407) | 0.852 | fail |
+| Phi-3.5-mini | 0.809 (0.296 / 0.604) | 0.852 | fail |
+| SmolLM2-1.7B | 0.972 | H >= tau | fail |
+
+- On MMLU-Pro, no version of any parent has H_g < tau on all large slices, so G2 cannot pass there.
+- The required inclusion probability is the same for ours and B1, as plan E1 states: screening does
+  not change the per-candidate rate, only how many candidates are audited (share column).
+- G2 passes for 3 of 6 GSM8K parents at Q8_0. The rate is set by the real harm rate: it passes
+  where the worst large-slice H is at most about 0.024 (14B Q6_K at 0.024 passes, Llama Q8_0 at 0.027
+  fails).
+
+## 47. Wall-clock cost model and G3 at equal wall-clock (`src/wallclock_model.py`, `src/g3_wallclock.py`)
+
+The measured end-to-end speedup is below 1.5 (docs/status_2026-11-03.md sec. 7). So the token
+cost model of sec. 23/35 (cost = decode tokens + r x prefill tokens) is checked against wall-clock.
+- **Model.** Continuous batching with 256 slots, FCFS:
+  time = alpha x makespan(steps) + beta x decoded tokens + gamma x prompt tokens.
+  It is fitted by NNLS to the full and continuation runs of every truth matrix (7-9 rows each).
+- **Fit.** Max relative error is <= 2% for 10 of 12 matrices, 3.3% (Phi MMLU-Pro) and 6.4% (SmolLM2) for the rest. Leave-one-out is
+  <= 6%, except SmolLM2 (12%) and Phi MMLU-Pro (14%).
+- **The fixed per-step cost dominates.** For Qwen-3B GSM8K, alpha = 39.6 ms/step and
+  beta = 5.5 us/token. At full occupancy that is alpha / 256 = 155 us per token against 5.5 us.
+  The time of a generation run is therefore set by its number of steps, i.e. by the longest
+  requests, and auditing a subset saves little time for any method.
+  - alpha and beta are not separately identified where memory limits concurrency (14B).
+  - The predictions are still accurate there.
+
+G3 recomputed with this model. Harm certificate, worst slice, same designs and certificates as
+sec. 35; budget b is a fraction of the modelled full-evaluation time. Shown: B1 / ours, with the
+screening prefill either as implemented (full parent output) or lazy (up to t* + 1).
+
+| Parent / task | version | b = 0.6: B1 / ours full / ours lazy | b = 0.8: B1 / ours full / ours lazy |
+|---|---|---|---|
+| Qwen-3B GSM8K | Q8_0 | 0.068 / inf / inf | 0.041 / 0.063 / 0.042 (0.99x) |
+| Qwen-7B GSM8K | Q8_0 | 0.061 / inf / inf | 0.042 / inf / 0.045 (0.94x) |
+| Qwen-14B GSM8K | Q8_0 | 0.043 / 0.050 / 0.032 (1.33x) | 0.029 / 0.015 / 0.015 (**1.87x**) |
+| Llama-8B GSM8K | Q8_0 | 0.067 / inf / 0.098 | 0.044 / 0.063 / 0.042 (1.05x) |
+| Phi-3.5 GSM8K | Q8_0 | 0.089 / 0.081 / 0.063 (1.40x) | 0.062 / 0.051 / 0.051 (1.20x) |
+| Qwen-14B MMLU-Pro | Q8_0 | 0.094 / 0.087 / 0.087 (1.08x) | all 0.087 |
+
+- At b = 0.4 every method is infeasible or near-trivial. The zero-harm cover design alone costs
+  more than 0.4 of full time, because a subset run still takes the steps of its longest members.
+- Q6_K: ours is looser than B1 everywhere (0.45-0.97x).
+- Full table: `results/wallclock/g3_wallclock.md`.
+
+**What this changes.**
+- The G3 ratios of sec. 35 / docs/g1_tables.md (1.54-4.14x for Q8_0) are token-model ratios. In
+  wall-clock at decode batch 256 they do not hold: Q8_0 is 0.94-1.40x with lazy prefill, 1.87x only
+  for Qwen-14B at b = 0.8.
+- The r = 0.076 column assumes a decode batch of 32. Its wall-clock counterpart has not been measured.
+- Part of the penalty belongs to the evaluation scale, not to the method. 1,319 questions are only
+  about 5 waves of 256 requests, so tail effects are large. Pooling audits (several tasks or slices
+  in one engine run) or larger benchmarks would reduce them.
+- Item 3 of the next steps (an implementation that reuses the screening KV for continuation, and
+  bf16) is being measured (job 2297871, `src/speed_g1.py`).
+
 ## Not yet measured
 
 - A betting confidence sequence with adaptive bets for B2. The fixed-bet MGF bound (sec. 41) is

@@ -57,6 +57,9 @@ fp32, batch-invariant vLLM, A100; llama.cpp ladder dequantized to fp32 (Track A)
 
 ## Table 2. Worst-slice harm UCB at equal compute (delta' = 1.4e-3, mean over reps)
 
+**Token cost model** (cost = decode tokens + r x prefill tokens). In wall-clock at decode batch 256
+these ratios do not hold; see RESULTS.md sec. 47 and `results/wallclock/g3_wallclock.md`.
+
 Cells: B1 / ours / best other valid baseline (name), ratio = min(B1, other) / ours. Bold ratio: >= 1.5 (G3). Other baselines: B2, B2m, B3, B4 (B3/B4 and B2m only where `*_mgf_*` files exist). B6 undercovers and B2s builds on exact screening, so neither counts as a competitor.
 
 | Parent / task | version | true H | r=0.076, b=0.4 | r=0.076, b=0.6 | r=0.365, b=0.6 |

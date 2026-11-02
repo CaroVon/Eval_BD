@@ -61,6 +61,8 @@ for lab, td, _ in TRUTH:
                   f"{outside} | {l3b} |")
 
 md += ["", "## Table 2. Worst-slice harm UCB at equal compute (delta' = 1.4e-3, mean over reps)", "",
+       "**Token cost model** (cost = decode tokens + r x prefill tokens). In wall-clock at decode batch 256",
+       "these ratios do not hold; see RESULTS.md sec. 47 and `results/wallclock/g3_wallclock.md`.", "",
        "Cells: B1 / ours / best other valid baseline (name), ratio = min(B1, other) / ours. "
        "Bold ratio: >= 1.5 (G3). Other baselines: B2, B2m, B3, B4 (B3/B4 and B2m only where "
        "`*_mgf_*` files exist). B6 undercovers and B2s builds on exact screening, so neither "
