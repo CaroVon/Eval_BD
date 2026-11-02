@@ -24,6 +24,9 @@
 | SmolLM2 GSM8K | Q6_K | 0.124 | 0.272 | 0.0124 | 0.92 |
 | SmolLM2 GSM8K | Q4_K_M | 0.124 | 0.797 | 0.0386 | 0.98 |
 | SmolLM2 GSM8K | Q3_K_M | 0.124 | 1.278 | 0.0669 | 1.06 |
+| Qwen-3B GSM8K imatrix | Q6_K | 0.121 | 0.208 | 0.0086 | 0.85 |
+| Qwen-3B GSM8K imatrix | Q4_K_M | 0.121 | 0.590 | 0.0232 | 0.82 |
+| Qwen-3B GSM8K imatrix | Q3_K_M | 0.121 | 1.535 | 0.0600 | 0.81 |
 | Llama-8B MMLU-Pro | Q8_0 | 0.179 | 0.058 | 0.0036 | 0.86 |
 | Llama-8B MMLU-Pro | Q6_K | 0.179 | 0.191 | 0.0116 | 0.85 |
 | Llama-8B MMLU-Pro | Q4_K_M | 0.179 | 0.541 | 0.0328 | 0.85 |

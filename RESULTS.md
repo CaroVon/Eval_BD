@@ -1121,6 +1121,23 @@ Q8_0 ignores the imatrix, so the plain Q8_0 is used. The truth matrix comes from
     so a harm certificate cannot pass at tau = 0.05. Only the net certificate (sec. 15, 42) could.
 - Files: `results/imatrix/` (summaries, law ratios, baselines at r = 0.076 and 0.365).
 
+## 44. Frozen G1 tables (`src/g1_tables.py` -> `docs/g1_tables.md`)
+
+The main tables are generated directly from the truth matrices and baseline outputs, so no number
+is copied by hand.
+- Table 1: all 11 truth matrices. No flip falls outside D, and lemma 3b holds everywhere.
+- Table 2: worst-slice harm UCB at equal compute. The ratio is min(B1, best of B2 / B2m / B3 / B4)
+  over ours. B2s builds on exact screening, so it is not counted as a competitor. Counted as one, it
+  would tie ours almost everywhere, because AIPW on the screened set reaches the same exact H.
+- Ratios >= 1.5:
+  - GSM8K Q8_0 for all five non-SmolLM2 parents, at all three settings: 1.54-4.14.
+  - GSM8K Q6_K only at r = 0.076, b = 0.6: 7B 1.72, 14B 1.51, Phi 1.63, Qwen-3B imatrix 1.53.
+  - Llama-8B 1.49, Qwen-3B plain 1.27.
+  - MMLU-Pro only for Qwen-14B Q8_0 at b = 0.4 (1.61).
+- SmolLM2 has ratio 1.00 everywhere, because its parent-correct set is small enough that every
+  method audits it completely at b = 0.4.
+- Figures were regenerated: the margin law now has 43 cases and a 20-colour palette.
+
 ## Not yet measured
 
 - A betting confidence sequence with adaptive bets for B2. The fixed-bet MGF bound (sec. 41) is
