@@ -9,7 +9,8 @@ N_DRAW Poisson draws of the audited set:
                           (current implementation)
          prefill 'lazy' : prompt + parent output up to t* + 1 on D (chunked early stop, DECISIONS D7)
 The budget b is a fraction of the modelled time of a full evaluation of that version.
-Usage: g3_wallclock.py <scratch_root> <wallclock_model.json> <out.json>
+Usage: g3_wallclock.py <scratch_root> <wallclock_model.json> <out.json> [slots]
+  slots: decode batch of the modelled engine (default 256); only truth dirs present in the model json run.
 """
 import heapq
 import json
@@ -23,7 +24,8 @@ from simulate_cert import build_slices, load_version, read_jsonl
 from simulate_net import simulate
 
 
-def makespan(lengths, slots=256):
+def makespan(lengths, slots=None):
+    slots = slots or SLOTS
     """Engine steps of FCFS list scheduling on `slots` slots (as in wallclock_model.py)."""
     h = [0] * min(slots, len(lengths))
     for L in lengths:
@@ -34,6 +36,7 @@ def makespan(lengths, slots=256):
 
 root, wmf, outp = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
 WM = json.loads(wmf.read_text())
+SLOTS = int(sys.argv[4]) if len(sys.argv) > 4 else 256
 TRUTH = [("Qwen2.5-3B GSM8K", "full_truth"), ("Qwen2.5-7B GSM8K", "q7_truth"), ("Qwen2.5-14B GSM8K", "q14_truth"),
          ("Llama-3.1-8B GSM8K", "l8_truth"), ("Phi-3.5-mini GSM8K", "phi_truth"),
          ("Qwen2.5-3B MMLU-Pro 1k", "mmlu_truth"), ("Qwen2.5-14B MMLU-Pro 1k", "q14m_truth")]
@@ -82,6 +85,8 @@ res, md = {}, ["| Parent / task | version | true worst H | " +
                " | ".join(f"b={b}: B1 / ours full / ours lazy" for b in BUDGETS) + " |",
                "|---|---|---|" + "---|" * len(BUDGETS)]
 for lab, td in TRUTH:
+    if td not in WM:
+        continue
     T = root / td
     gen = read_jsonl(T / "parent_gen" / "gen_A.jsonl")
     meta = [{"id": g["id"], "prompt_len": g["prompt_len"], "parent_len": len(g["out_ids"])} for g in gen]

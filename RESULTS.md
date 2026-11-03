@@ -1276,6 +1276,45 @@ Qwen2.5-3B GSM8K 1,319, A100, batch-invariant vLLM, compiled mode, max_num_seqs 
   claim.
 - Files: `results/speed_g1/`.
 
+## 49. Decode batch 32: measured G1 speedup and G3 at equal wall-clock (`scripts/speed_bs.sbatch`, jobs 2298415-2298416)
+
+The same protocol as sec. 48 with max_num_seqs = 32, fp32, on GSM8K 1,319. Qwen-3B runs in compiled
+mode and Qwen-14B in eager mode, as in their truth runs.
+
+| Version | full | prefill | cont (prefix cache) | **speedup** | lemma 3 violations |
+|---|---|---|---|---|---|
+| Qwen-3B Q8_0 | 445.0 | 45.1 | 151.3 | **2.26** (2.21 without cache) | 0 |
+| Qwen-3B Q6_K | 449.5 | 45.3 | 326.1 | 1.21 | 0 |
+| Qwen-14B Q8_0 | 1,037.3 | 186.2 | 314.9 | **2.07** (2.04) | 0 |
+| Qwen-14B Q6_K | 1,050.3 | 186.4 | 679.7 | 1.21 | 0 |
+
+- **Batch invariance across max_num_seqs.** The full generations at batch 32 are token-identical to
+  the batch-256 truth matrices: 4 x 1,319 / 1,319.
+- **The G1 speedup gate (>= 1.5) passes for Q8_0 at batch 32** (measured, end to end). Q6_K reaches
+  1.21.
+- **The per-step cost is the same as at batch 256.** The fitted wall-clock model (32 slots, error
+  <= 1.2%) gives alpha = 37.8 ms/step for 3B (39.6 at batch 256) and 87.8 ms for 14B. The prefill
+  costs the same at both batches, so its share falls from 0.5 to 0.10 (3B) and 0.18 (14B).
+- **G3 at equal wall-clock, batch 32** (`results/wallclock/g3_wallclock_bs32.md`). Values are
+  B1 / ours (full prefill), ratio.
+
+| Version | b = 0.4 | b = 0.6 | b = 0.8 |
+|---|---|---|---|
+| Qwen-3B Q8_0 | 0.081 / 0.029, **2.78x** | 0.055 / 0.029, **1.87x** | all exact |
+| Qwen-3B Q6_K | 0.130 / 0.122, 1.07x | 0.098 / 0.082, 1.19x | all exact |
+| Qwen-14B Q8_0 | 0.067 / 0.031, **2.17x** (lazy 3.18x) | 0.043 / 0.015, **2.79x** | 0.029 / 0.015, **1.87x** |
+| Qwen-14B Q6_K | 0.097 / 0.105, 0.93x | 0.071 / 0.064, 1.11x | 0.053 / 0.035, **1.51x** |
+
+  At batch 32 the wall-clock ratios agree with the token model at r = 0.076: Qwen-3B Q8_0 is
+  2.66 / 1.83x in sec. 35, against 2.78 / 1.87x here. So the token model is accurate in the small-batch
+  regime, and inaccurate at batch 256.
+- **Limit of the claim (must be stated).** In absolute time, a full evaluation at batch 32 is 4.8x
+  (3B: 445 vs 92 s) and 2.4x (14B: 1,037 vs 437 s) slower than at batch 256. Screening +
+  continuation at batch 32 is slower than a full evaluation at batch 256: 196 vs 92 s for 3B,
+  501 vs 437 s for 14B. The gains are therefore real only when a large decode batch is
+  not available, e.g. memory-bound (large models, long contexts, several versions sharing a GPU).
+  That a parent is naturally limited to a small batch still has to be shown (32B multi-GPU test).
+
 ## Not yet measured
 
 - A betting confidence sequence with adaptive bets for B2. The fixed-bet MGF bound (sec. 41) is

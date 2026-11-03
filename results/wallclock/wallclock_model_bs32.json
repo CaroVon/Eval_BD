@@ -1,0 +1,28 @@
+{
+ "full_truth": {
+  "alpha_s_per_step": 0.0377755403061709,
+  "beta_s_per_token": 0.0,
+  "gamma_s_per_prompt_token": 7.95567579486177e-06,
+  "prefill_pass_s_per_token": 8.832498027763636e-05,
+  "rel_err": {
+   "Q8_0/full": 0.0037216959200289798,
+   "Q8_0/cont": 0.0024257733133189905,
+   "Q6_K/full": -0.0032304779251896352,
+   "Q6_K/cont": -0.0013824299327441422
+  },
+  "slots": 32
+ },
+ "q14_truth": {
+  "alpha_s_per_step": 0.08776939349695384,
+  "beta_s_per_token": 0.0,
+  "gamma_s_per_prompt_token": 0.0003532653867345147,
+  "prefill_pass_s_per_token": 0.0003749956377422939,
+  "rel_err": {
+   "Q8_0/full": 0.004836502717203595,
+   "Q8_0/cont": -0.011551007755620797,
+   "Q6_K/full": -0.00532119778939042,
+   "Q6_K/cont": 0.003857346079086813
+  },
+  "slots": 32
+ }
+}
