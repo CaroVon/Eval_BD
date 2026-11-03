@@ -35,7 +35,11 @@ def load_questions(data_dir, ids_file):
 
 
 def build_prompt_ids(tok, rec):
-    msgs = [{"role": "user", "content": user_content(rec)}]
+    msgs = []
+    for ex in rec.get("fewshot", []):  # k-shot exemplars as prior turns (absent: zero-shot, unchanged)
+        msgs += [{"role": "user", "content": user_content({**rec, **ex, "fewshot": []})},
+                 {"role": "assistant", "content": ex["answer"]}]
+    msgs.append({"role": "user", "content": user_content(rec)})
     enc = tok.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True)
     # Newer transformers return a BatchEncoding here rather than a list of ids.
     ids = enc["input_ids"] if hasattr(enc, "keys") else enc
