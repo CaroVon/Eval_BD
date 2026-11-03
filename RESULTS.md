@@ -1239,6 +1239,43 @@ screening prefill either as implemented (full parent output) or lazy (up to t* +
 - Item 3 of the next steps (an implementation that reuses the screening KV for continuation, and
   bf16) is being measured (job 2297871, `src/speed_g1.py`).
 
+## 48. Measured end-to-end speedup under implementation variants (`src/speed_g1.py`, job 2297871)
+
+Qwen2.5-3B GSM8K 1,319, A100, batch-invariant vLLM, compiled mode, max_num_seqs 256.
+- Every variant runs in its own process after a warm-up, so JIT and start-up are not timed.
+- Speedup = full generation / (screening prefill + scan + continuation), all in seconds.
+- Lemma 3 is checked against the truth matrix (fp32) or against an in-job full generation (bf16).
+
+| Variant | full | prefill | cont | speedup | D share | lemma 3 violations |
+|---|---|---|---|---|---|---|
+| fp32 Q8_0, top-2 (as in the truth runs) | 92.3 | 43.9 | 52.2 | 0.96 | 0.546 | 0 |
+| fp32 Q8_0, top-1 | 92.3 | 44.0 | 52.1 | 0.96 | 0.546 | 0 |
+| fp32 Q8_0, top-1, prefix caching | 92.3 | 44.1 | 41.6 | **1.08** | 0.546 | 0 |
+| bf16 Q8_0, top-2 | 65.6 | 22.4 | 42.3 | 1.01 | 0.715 | 0 (1,615 tie positions) |
+| bf16 Q8_0, top-2, prefix caching | 65.6 | 22.6 | 39.2 | 1.06 | 0.715 | 0 |
+| fp32 Q6_K, top-1, prefix caching | 88.7 | 44.2 | 72.3 | 0.76 | 0.913 | 0 |
+| bf16 Q6_K, top-2, prefix caching | 71.1 | 22.7 | 56.4 | 0.90 | 0.939 | 0 |
+
+- **Correctness carries over.** Prefix caching (continuation reuses the screening KV) and bf16
+  (with the smallest-id tie rule) both keep lemma 3 exact on all 1,319 questions.
+- **Logprob materialisation is negligible.** top-1 and top-2 take the same prefill time.
+- **Prefix caching cuts continuation by 20% (fp32 Q8_0).** Without it, the continuation
+  re-prefills prompt + prefix.
+- **bf16 halves the prefill and speeds up generation by 30%, but ties enlarge D.** The D share
+  rises from 0.55 to 0.72, so the net speedup is unchanged (1.06 vs 1.08).
+- **The best variant reaches 1.08x, far from 1.5x.** Continuation still takes 45% of the full time
+  for 34% of the tokens. The cause is the fixed per-step cost (sec. 47), which no implementation
+  choice here removes.
+  - Lazy prefill (stop at t* + 1) would lower the prefill further.
+  - Even removing it entirely gives at most 92.3 / 41.6 = 2.2x, and a realistic lazy prefill
+    (excluded questions still need the full parent output) leaves about 1.2-1.3x.
+- **Decision point (status doc sec. 7).** The gap to 1.5x at batch 256 is not an artifact of our
+  implementation choices. It follows from plan E3 under this engine's cost structure. A G1 speedup
+  >= 1.5 needs a regime where decode cost per token is high relative to prefill (small effective
+  batch, memory-bound decode). Under the plan's own fallback (sec. 5.5), that supports the narrowed
+  claim.
+- Files: `results/speed_g1/`.
+
 ## Not yet measured
 
 - A betting confidence sequence with adaptive bets for B2. The fixed-bet MGF bound (sec. 41) is
