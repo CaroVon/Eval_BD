@@ -99,9 +99,66 @@ for lab, td, stem in TRUTH:
         if trueH is not None:
             md.append(f"| {lab} | {v} | {trueH:.3f} | " + " | ".join(cells) + " |")
 
+md += ["", "## Table 3. G3 at equal wall-clock (fitted wall-clock model; RESULTS.md sec. 47, 49-50)", "",
+       "Cells: B1 / ours (full screening prefill, as implemented), ratio; [min simultaneous coverage of "
+       "B1 and ours over MC reps]. inf: the method's design alone exceeds the budget.", "",
+       "| Parent / task | version | batch | b = 0.4 | b = 0.6 | b = 0.8 |", "|---|---|---|---|---|---|"]
+for blab, f in [("32", root / "res" / "g3_wallclock_bs32.json"), ("256", root / "res" / "g3_wallclock.json")]:
+    if not f.exists():
+        continue
+    js = json.loads(f.read_text())
+    for lab, vs in js.items():
+        for v, x in vs.items():
+            cells = []
+            for b in ("0.4", "0.6", "0.8"):
+                c = x["values"][b]
+                o, b1 = c["ours_full"], c["B1"]
+                cov = min(c.get("B1_coverage", 1.0), c.get("ours_full_coverage", 1.0))
+                if o == float("inf") or b1 == float("inf"):
+                    cells.append(f"{b1:.3f} / {o:.3f} [{cov:.3f}]".replace("inf", "inf"))
+                    continue
+                r = b1 / o
+                cells.append(f"{b1:.3f} / {o:.3f}, {'**%.2f**' % r if r >= 1.5 else '%.2f' % r} [{cov:.3f}]")
+            md.append(f"| {lab} | {v} | {blab} | " + " | ".join(cells) + " |")
+
+# Table 4: measured end-to-end speedup (speed_g1/, speed_bs/)
+md += ["", "## Table 4. Measured end-to-end speedup, full generation / (screening prefill + continuation)", "",
+       "fp32, A100, GSM8K 1,319; best of with / without prefix caching. Lemma 3 violations are 0 in every run.", "",
+       "| Parent | version | batch 32 | batch 64 | batch 128 | batch 256 |", "|---|---|---|---|---|---|"]
+SB, G1 = root / "res" / "speed_bs", root / "res" / "speed_g1"
+
+
+def sp(d, v):
+    full = json.loads((d / f"gen_{v}.json").read_text())["seconds"]["full_s"]
+    best = 0.0
+    for suf in ("", "_pc"):
+        f = d / f"scr_{v}_k1{suf}.json"
+        if f.exists():
+            s = json.loads(f.read_text())["seconds"]
+            best = max(best, full / (s["prefill_s"] + s["scan_s"] + s["cont_s"]))
+    return best
+
+
+for tag, lab in [("qwen3b", "Qwen2.5-3B"), ("qwen7b", "Qwen2.5-7B"), ("qwen14b", "Qwen2.5-14B"),
+                 ("llama8b", "Llama-3.1-8B"), ("phi35", "Phi-3.5-mini")]:
+    for v in ("Q8_0", "Q6_K"):
+        cells = []
+        for b in (32, 64, 128):
+            d = SB / f"{tag}_bs{b}"
+            cells.append(f"{sp(d, v):.2f}" if (d / f"gen_{v}.json").exists() else "-")
+        if tag == "qwen3b" and (G1 / f"gen_fp32_{v}.json").exists():
+            full = json.loads((G1 / f"gen_fp32_{v}.json").read_text())["seconds"]["full_s"]
+            s = json.loads((G1 / f"scr_fp32_{v}_k1_pc.json").read_text())["seconds"]
+            cells.append(f"{full / (s['prefill_s'] + s['scan_s'] + s['cont_s']):.2f}")
+        else:
+            cells.append("-")
+        md.append(f"| {lab} | {v} | " + " | ".join(cells) + " |")
+
 md += ["", "## Figures", "",
+       "- `results/figures/speedup_vs_batch.pdf`: measured end-to-end speedup vs decode batch.",
+       "- `results/figures/g3_wallclock.pdf`: G3 ratios at equal wall-clock, batch 256 and 32.",
        "- `results/figures/margin_law.pdf`: observed vs predicted per-token divergence rate (all cases).",
-       "- `results/figures/break_even.pdf`: regime map, break-even audit rate vs r.",
+       "- `results/figures/break_even.pdf`: regime map, break-even audit rate vs r (token cost model).",
        "- `results/figures/baselines_q8.pdf`: Q8_0 worst-slice UCB by method.",
        "- `results/figures/cost_law.pdf`: r vs mean decode batch.",
        "- Margin-law table: `results/figures/summary_tables.md`.", ""]

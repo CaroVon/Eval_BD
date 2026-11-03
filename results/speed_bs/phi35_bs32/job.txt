@@ -1,0 +1,1 @@
+job=2299455 node=g002 name=phi-3.5-mini-instruct maxseqs=32 extra=--enforce-eager restart=0

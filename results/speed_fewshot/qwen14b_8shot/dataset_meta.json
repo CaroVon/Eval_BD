@@ -1,0 +1,11 @@
+{
+ "repo": "openai/gsm8k",
+ "config": "main",
+ "split": "test",
+ "revision": "740312add88f781978c0658806c59bc2815b9866",
+ "n": 1319,
+ "subset_seed": 20261028,
+ "subset_size": 200,
+ "fewshot_k": 8,
+ "fewshot_source": "train[:K], <<...>> removed"
+}

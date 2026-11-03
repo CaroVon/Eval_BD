@@ -1,0 +1,53 @@
+{
+ "name": "scr_Q6_K_k1_pc",
+ "mode": "screen",
+ "n": 1319,
+ "dtype": "float32",
+ "topk": 1,
+ "prefix_caching": true,
+ "seconds": {
+  "prefill_s": 89.15047335624695,
+  "scan_s": 0.09046030044555664,
+  "cont_s": 417.2173342704773
+ },
+ "lemma3a_violations": 0,
+ "lemma3b_violations": 0,
+ "D_frac": 0.8043972706595905,
+ "tie_positions": 0,
+ "decode_tokens_cont": 194740,
+ "decode_tokens_full_ref": 309054,
+ "prefill_tokens": 456899,
+ "config": {
+  "vllm": "0.32.0",
+  "torch": "2.13.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "capability": [
+   8,
+   0
+  ],
+  "node": "i001-ds",
+  "slurm_job": "2299454",
+  "env": {
+   "CUDA_VISIBLE_DEVICES": "0",
+   "VLLM_BATCH_INVARIANT": "1"
+  },
+  "args": {
+   "mode": "screen",
+   "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/dequant_fp32/llama-3.1-8b-instruct-Q6_K",
+   "name": "scr_Q6_K_k1_pc",
+   "parent_gen": "/net/spaces/jevans/klab/caroyf/outputs/ICML/truth/gsm8k_full_fp32_llama8b_2280621/parent_gen/gen_A.jsonl",
+   "ref": "/net/spaces/jevans/klab/caroyf/outputs/ICML/truth/gsm8k_full_fp32_llama8b_2280621/screen/Q6_K/records.jsonl",
+   "data_dir": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k",
+   "ids": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k/all_test_ids.json",
+   "out_dir": "/net/spaces/jevans/klab/caroyf/outputs/ICML/speed_bs/llama8b_bs32",
+   "max_tokens": 1024,
+   "max_num_seqs": 32,
+   "topk": 1,
+   "dtype": "float32",
+   "prefix_caching": true,
+   "skip_full": true,
+   "enforce_eager": true
+  }
+ }
+}

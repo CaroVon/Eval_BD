@@ -1250,7 +1250,7 @@ Qwen2.5-3B GSM8K 1,319, A100, batch-invariant vLLM, compiled mode, max_num_seqs 
 |---|---|---|---|---|---|---|
 | fp32 Q8_0, top-2 (as in the truth runs) | 92.3 | 43.9 | 52.2 | 0.96 | 0.546 | 0 |
 | fp32 Q8_0, top-1 | 92.3 | 44.0 | 52.1 | 0.96 | 0.546 | 0 |
-| fp32 Q8_0, top-1, prefix caching | 92.3 | 44.1 | 41.6 | **1.08** | 0.546 | 0 |
+| fp32 Q8_0, top-1, prefix caching | 92.3 | 44.1 | 41.6 | **1.07** | 0.546 | 0 |
 | bf16 Q8_0, top-2 | 65.6 | 22.4 | 42.3 | 1.01 | 0.715 | 0 (1,615 tie positions) |
 | bf16 Q8_0, top-2, prefix caching | 65.6 | 22.6 | 39.2 | 1.06 | 0.715 | 0 |
 | fp32 Q6_K, top-1, prefix caching | 88.7 | 44.2 | 72.3 | 0.76 | 0.913 | 0 |
@@ -1262,8 +1262,8 @@ Qwen2.5-3B GSM8K 1,319, A100, batch-invariant vLLM, compiled mode, max_num_seqs 
 - **Prefix caching cuts continuation by 20% (fp32 Q8_0).** Without it, the continuation
   re-prefills prompt + prefix.
 - **bf16 halves the prefill and speeds up generation by 30%, but ties enlarge D.** The D share
-  rises from 0.55 to 0.72, so the net speedup is unchanged (1.06 vs 1.08).
-- **The best variant reaches 1.08x, far from 1.5x.** Continuation still takes 45% of the full time
+  rises from 0.55 to 0.72, so the net speedup is unchanged (1.06 vs 1.07).
+- **The best variant reaches 1.07x, far from 1.5x.** Continuation still takes 45% of the full time
   for 34% of the tokens. The cause is the fixed per-step cost (sec. 47), which no implementation
   choice here removes.
   - Lazy prefill (stop at t* + 1) would lower the prefill further.
@@ -1314,6 +1314,86 @@ mode and Qwen-14B in eager mode, as in their truth runs.
   501 vs 437 s for 14B. The gains are therefore real only when a large decode batch is
   not available, e.g. memory-bound (large models, long contexts, several versions sharing a GPU).
   That a parent is naturally limited to a small batch still has to be shown (32B multi-GPU test).
+
+## 50. Five parents at batch 32 and a batch sweep (jobs 2299453-2299455, 2299457-2299458)
+
+The protocol is the same as sec. 49, with each parent in the mode of its truth run (Qwen-7B, Llama-8B
+and Phi-3.5 eager).
+
+**Measured speedup.** The full tables are `docs/g1_tables.md` Table 4 and
+`results/figures/speedup_vs_batch.pdf`.
+
+| Parent | Q8_0 at batch 32 | Q6_K at batch 32 |
+|---|---|---|
+| Qwen2.5-3B | 2.26 | 1.21 |
+| Qwen2.5-7B | 2.50 (2.06 with prefix caching) | 1.49 |
+| Qwen2.5-14B | 2.07 | 1.21 |
+| Llama-3.1-8B | 1.90 | 1.23 |
+| Phi-3.5-mini | 2.36 | 1.43 |
+
+- **Q8_0 passes the G1 speedup gate for all five parents at batch 32.** Q6_K stays below 1.5;
+  Qwen-7B is closest at 1.49.
+- **Prefix caching is not always faster.** For Qwen-7B in eager mode, continuation took 212 s with it
+  and 158 s without. We did not find the cause, so both numbers are reported.
+- **Batch sweep, Qwen-3B Q8_0** (prefix caching): 2.26 / 1.80 / 1.26 / 1.07 at batch
+  32 / 64 / 128 / 256. The 1.5x threshold is crossed between batch 64 and 128, at about 90-100.
+- **Batch invariance.** Every capped-batch run is token-identical to the batch-256 truth matrix. That
+  is 8 more checks of 1,319 / 1,319: Qwen-7B, Llama-8B and Phi-3.5 each at Q8_0 and Q6_K, and
+  Qwen-3B Q8_0 at batch 64 and 128.
+- Lemma 3 has no violations in any run.
+
+**G3 at equal wall-clock, batch 32.**
+- The wall-clock model is fitted per parent on the batch-32 runs (`src/wallclock_fit_bs.py`, error
+  <= 1.2%). alpha is 26-88 ms/step; beta is about 0 except Phi.
+- Values are B1 / ours, full prefill as implemented. The full table with coverage is
+  `docs/g1_tables.md` Table 3.
+
+| Parent | Q8_0 b = 0.4 | Q8_0 b = 0.6 | Q6_K b = 0.6 |
+|---|---|---|---|
+| Qwen-3B | **2.78** | **1.87** | 1.19 |
+| Qwen-7B | **2.95** | **2.04** | **1.76** |
+| Qwen-14B | **2.17** | **2.79** | 1.11 |
+| Llama-8B | **2.14** | **1.93** | 1.16 |
+| Phi-3.5 | **2.17** | **1.62** | **1.65** |
+
+- **G3 holds at equal wall-clock for Q8_0 on all five parents at batch 32** (2.14-2.95 at b = 0.4,
+  1.62-2.79 at b = 0.6). For Q6_K it holds only for Qwen-7B and Phi-3.5 at b = 0.6.
+- **Coverage.** The minimum simultaneous coverage over all 178 method x budget x version settings
+  (batch 32 and 256) is 0.9975 (nominal 0.95).
+- **Figures.** `results/figures/g3_wallclock.pdf` shows batch 256 next to batch 32.
+  `break_even.pdf` and `baselines_q8.pdf` remain token-model figures and are labelled as such.
+
+## 51. GSM8K 8-shot without a batch cap (Qwen2.5-14B, fp32, eager; job 2299456): negative
+
+Purpose: find a natural memory limit on one GPU. With 8 exemplars as prior chat turns the mean prompt
+is 1,304 tokens, and the KV cache holds 27,760 tokens.
+- Data: `datasets/gsm8k_8shot`, built by `scripts/prep_gsm8k_fewshot.py` from train[:8] at the
+  pinned revision.
+- Zero-shot prompts are unchanged by the new `fewshot` support: 1,319 / 1,319 prompt lengths are
+  identical.
+
+| Run (Q8_0 unless noted) | seconds |
+|---|---|
+| full generation, no prefix caching | 1,763.1 |
+| full generation, prefix caching | 310.8 |
+| screening prefill (prompt logprobs), prefix caching | 761.0 |
+| continuation, prefix caching | 121.2 |
+| speedup Q8_0 / Q6_K | 0.35 / 0.32 |
+
+- **The shared exemplar prefix removes the memory limit once it is cached.** Full generation is
+  5.7x faster with prefix caching. A fair engine caches it, so 8-shot is not evidence of a natural
+  small-batch regime.
+- **The screening prefill cannot use the cache.** vLLM recomputes the whole prompt for requests that
+  ask for prompt logprobs. The 761 s match 1,319 x (1,304 + output) tokens at the measured prefill
+  rate.
+  - An engine that returns logprobs only for the parent-output positions on top of a cached prefix
+    would avoid this.
+  - Even then the estimate is about 1.0x (zero-shot prefill 186 s + continuation 121 s vs 311 s).
+- **Correctness.** Prefix caching does not change outputs (Q8_0 with and without caching: 1,319 /
+  1,319 identical). Lemma 3 holds for Q8_0 and Q6_K (D share 0.32 / 0.68).
+- **Consequence.** A natural small-batch regime needs per-request memory that cannot be shared: long
+  outputs, long per-question contexts, or larger models. The 32B multi-GPU test remains the
+  direct evidence.
 
 ## Not yet measured
 

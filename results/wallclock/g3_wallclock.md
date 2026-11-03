@@ -1,5 +1,3 @@
-| Parent / task | version | true worst H | b=0.4: B1 / ours full / ours lazy | b=0.6: B1 / ours full / ours lazy | b=0.8: B1 / ours full / ours lazy |
-|---|---|---|---|---|---|
 | Qwen2.5-3B GSM8K | Q8_0 | 0.029 | inf / inf (0.00x) / inf (0.00x) | 0.068 / inf (0.00x) / inf (0.00x) | 0.041 / 0.063 (0.66x) / 0.042 (0.99x) |
 | Qwen2.5-3B GSM8K | Q6_K | 0.063 | 0.167 / inf (0.00x) / inf (0.00x) | 0.107 / inf (0.00x) / 0.150 (0.71x) | 0.071 / 0.158 (0.45x) / 0.093 (0.76x) |
 | Qwen2.5-7B GSM8K | Q8_0 | 0.026 | inf / inf (0.00x) / inf (0.00x) | 0.061 / inf (0.00x) / inf (0.00x) | 0.042 / inf (0.00x) / 0.045 (0.94x) |

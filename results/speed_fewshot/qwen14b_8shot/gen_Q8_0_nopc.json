@@ -1,0 +1,45 @@
+{
+ "name": "gen_Q8_0_nopc",
+ "mode": "gen",
+ "n": 1319,
+ "dtype": "float32",
+ "topk": 2,
+ "prefix_caching": false,
+ "seconds": {
+  "full_s": 1763.0532267093658
+ },
+ "decode_tokens_full": 214610,
+ "config": {
+  "vllm": "0.32.0",
+  "torch": "2.13.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "capability": [
+   8,
+   0
+  ],
+  "node": "j005-ds",
+  "slurm_job": "2299456",
+  "env": {
+   "CUDA_VISIBLE_DEVICES": "0",
+   "VLLM_BATCH_INVARIANT": "1"
+  },
+  "args": {
+   "mode": "gen",
+   "model": "/net/spaces/jevans/klab/caroyf/data/ICML/models/dequant_fp32/qwen2.5-14b-instruct-Q8_0",
+   "name": "gen_Q8_0_nopc",
+   "parent_gen": null,
+   "ref": null,
+   "data_dir": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k_8shot",
+   "ids": "/net/spaces/jevans/klab/caroyf/data/ICML/datasets/gsm8k_8shot/all_test_ids.json",
+   "out_dir": "/net/spaces/jevans/klab/caroyf/outputs/ICML/speed_fewshot/qwen14b_8shot",
+   "max_tokens": 1024,
+   "max_num_seqs": 256,
+   "topk": 2,
+   "dtype": "float32",
+   "prefix_caching": false,
+   "skip_full": false,
+   "enforce_eager": true
+  }
+ }
+}

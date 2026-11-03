@@ -15,6 +15,7 @@ from glob import glob
 from pathlib import Path
 
 import matplotlib
+import matplotlib.ticker
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
@@ -131,10 +132,71 @@ for i, (key, d) in enumerate(reg.items()):
             color=cmap(list(NAMES).index(t) % 10) if t in NAMES else "gray", label=f"{NAMES.get(t, t)} {v}")
 ax.axhline(1, color="k", lw=0.8, ls=":")
 ax.set(xlabel="prefill / decode cost ratio r", ylabel="break-even audit rate $\\pi^*$",
-       title="Qwen-3B: screening is cheaper than B1 when $\\pi > \\pi^*$")
+       title="Token cost model: screening cheaper than B1 when $\\pi > \\pi^*$")
 ax.set_ylim(0, 1.6)
 ax.legend(fontsize=6.5)
 save(fig, "break_even")
+
+# 5. measured end-to-end speedup vs decode batch (speed_g1/, speed_bs/; RESULTS.md sec. 48-50)
+def speed(d, v, pc):
+    s = json.loads((d / f"scr_{v}_k1{'_pc' if pc else ''}.json").read_text())["seconds"]
+    return json.loads((d / f"gen_{v}.json").read_text())["seconds"]["full_s"] / (
+        s["prefill_s"] + s["scan_s"] + s["cont_s"])
+
+SB = R / "speed_bs"
+if SB.exists():
+    fig, ax = plt.subplots(figsize=(5, 3.8))
+    g1 = R / "speed_g1"
+    bs, sp = [], []
+    for b in (32, 64, 128):
+        if (SB / f"qwen3b_bs{b}").exists():
+            bs.append(b); sp.append(speed(SB / f"qwen3b_bs{b}", "Q8_0", True))
+    if (g1 / "scr_fp32_Q8_0_k1_pc.json").exists():
+        s = json.loads((g1 / "scr_fp32_Q8_0_k1_pc.json").read_text())["seconds"]
+        bs.append(256); sp.append(json.loads((g1 / "gen_fp32_Q8_0.json").read_text())["seconds"]["full_s"]
+                                  / (s["prefill_s"] + s["scan_s"] + s["cont_s"]))
+    ax.plot(bs, sp, "o-", color="k", label="Qwen-3B Q8_0 (batch sweep)")
+    tags = {"qwen7b": "Qwen-7B", "qwen14b": "Qwen-14B", "llama8b": "Llama-8B", "phi35": "Phi-3.5"}
+    for j, (tg, nm) in enumerate(tags.items()):
+        d = SB / f"{tg}_bs32"
+        if d.exists():
+            for v, mk in (("Q8_0", "o"), ("Q6_K", "s")):
+                ax.scatter([32 * (1 + 0.04 * (j + 1))], [max(speed(d, v, False), speed(d, v, True))], marker=mk,
+                           color=cmap(j + 1), label=f"{nm} (batch 32)" if v == "Q8_0" else None)
+    d = SB / "qwen3b_bs32"
+    if d.exists():
+        ax.scatter([32], [speed(d, "Q6_K", True)], marker="s", color="k")
+    ax.axhline(1.5, color="r", lw=0.8, ls="--", label="G1 threshold 1.5x")
+    ax.axhline(1.0, color="k", lw=0.6, ls=":")
+    ax.set(xscale="log", xlabel="max decode batch (max_num_seqs)", ylabel="measured end-to-end speedup",
+           title="Exact screening + continuation vs full generation (circles Q8_0, squares Q6_K)")
+    ax.set_xticks([32, 64, 128, 256]); ax.set_xticklabels(["32", "64", "128", "256"])
+    ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+    ax.title.set_fontsize(8)
+    ax.legend(fontsize=6.5)
+    save(fig, "speedup_vs_batch")
+
+# 6. G3 at equal wall-clock (g3_wallclock*.json; RESULTS.md sec. 47, 49, 50)
+files = [("batch 256", R / "g3_wallclock.json"), ("batch 32", R / "g3_wallclock_bs32.json")]
+if all(f.exists() for _, f in files):
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.6), sharey=True)
+    for ax, (lab, f) in zip(axes, files):
+        js = json.loads(f.read_text())
+        par = [p for p in js if "GSM8K" in p]
+        for k, (v, b) in enumerate([("Q8_0", "0.4"), ("Q8_0", "0.6"), ("Q6_K", "0.6")]):
+            ys = []
+            for p in par:
+                x = js[p][v]["values"][b]
+                ys.append(x["B1"] / x["ours_full"] if np.isfinite(x["ours_full"]) and x["ours_full"] > 0 else 0.0)
+            ax.bar(np.arange(len(par)) + (k - 1) * 0.27, ys, 0.27, label=f"{v}, b = {b}")
+        ax.axhline(1.5, color="r", lw=0.8, ls="--")
+        ax.axhline(1.0, color="k", lw=0.6, ls=":")
+        ax.set_xticks(np.arange(len(par)))
+        ax.set_xticklabels([p.replace(" GSM8K", "").replace("Qwen2.5-", "Qwen-") for p in par], fontsize=7, rotation=20)
+        ax.set_title(f"G3 at equal wall-clock, {lab} (0 = infeasible at budget b)", fontsize=9)
+    axes[0].set_ylabel("B1 / ours (worst-slice harm UCB)")
+    axes[0].legend(fontsize=7)
+    save(fig, "g3_wallclock")
 
 (F / "summary_tables.md").write_text("\n".join(md) + "\n", encoding="utf-8")
 print("FIGURES_DONE", sorted(p.name for p in F.iterdir()))

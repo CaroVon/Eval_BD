@@ -1,0 +1,1 @@
+job=2299457 node=g002 name=qwen2.5-3b-instruct maxseqs=64 extra= restart=0

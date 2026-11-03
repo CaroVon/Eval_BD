@@ -10,13 +10,17 @@
     },
     "0.6": {
      "B1": 0.06752340041520631,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.8": {
      "B1": 0.04138470548862116,
+     "B1_coverage": 1.0,
      "ours_full": 0.06297347283872332,
-     "ours_lazy": 0.04163870393856126
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.04163870393856126,
+     "ours_lazy_coverage": 1.0
     }
    }
   },
@@ -25,18 +29,24 @@
    "values": {
     "0.4": {
      "B1": 0.16723761665371184,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.10696710868586733,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
-     "ours_lazy": 0.15042671394444568
+     "ours_lazy": 0.15042671394444568,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.07118936271401395,
+     "B1_coverage": 1.0,
      "ours_full": 0.15788802021877485,
-     "ours_lazy": 0.09336772272689288
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.09336772272689288,
+     "ours_lazy_coverage": 1.0
     }
    }
   }
@@ -52,13 +62,16 @@
     },
     "0.6": {
      "B1": 0.06097654387549027,
+     "B1_coverage": 0.9975,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.8": {
      "B1": 0.041969974687963686,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
-     "ours_lazy": 0.044823441761027975
+     "ours_lazy": 0.044823441761027975,
+     "ours_lazy_coverage": 0.9975
     }
    }
   },
@@ -67,18 +80,22 @@
    "values": {
     "0.4": {
      "B1": 0.12477047101901037,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.08459396575191432,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.8": {
      "B1": 0.06256583311512612,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
-     "ours_lazy": 0.08437991328249933
+     "ours_lazy": 0.08437991328249933,
+     "ours_lazy_coverage": 1.0
     }
    }
   }
@@ -89,18 +106,25 @@
    "values": {
     "0.4": {
      "B1": 0.06598937176048966,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.04255383595793905,
+     "B1_coverage": 1.0,
      "ours_full": 0.05011841419979861,
-     "ours_lazy": 0.03197836219239676
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.03197836219239676,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.0286194865371741,
+     "B1_coverage": 1.0,
      "ours_full": 0.015337423312883432,
-     "ours_lazy": 0.015337423312883432
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.015337423312883432,
+     "ours_lazy_coverage": 1.0
     }
    }
   },
@@ -109,18 +133,24 @@
    "values": {
     "0.4": {
      "B1": 0.09682583621445234,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.07052938682999411,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
-     "ours_lazy": 0.08252362973690686
+     "ours_lazy": 0.08252362973690686,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.053130514896709224,
+     "B1_coverage": 1.0,
      "ours_full": 0.07759810028028652,
-     "ours_lazy": 0.055731383438873315
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.055731383438873315,
+     "ours_lazy_coverage": 1.0
     }
    }
   }
@@ -131,18 +161,24 @@
    "values": {
     "0.4": {
      "B1": 0.098189388881854,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.06708220238953738,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
-     "ours_lazy": 0.098189388881854
+     "ours_lazy": 0.098189388881854,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.04365381451081733,
+     "B1_coverage": 1.0,
      "ours_full": 0.06251998269689185,
-     "ours_lazy": 0.04167920357960631
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.04167920357960631,
+     "ours_lazy_coverage": 1.0
     }
    }
   },
@@ -151,18 +187,24 @@
    "values": {
     "0.4": {
      "B1": 0.130344632058312,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.09044133366404754,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
-     "ours_lazy": 0.130344632058312
+     "ours_lazy": 0.130344632058312,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.07635135135135135,
+     "B1_coverage": 1.0,
      "ours_full": 0.11968585657929318,
-     "ours_lazy": 0.08879832819545207
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.08879832819545207,
+     "ours_lazy_coverage": 1.0
     }
    }
   }
@@ -173,18 +215,25 @@
    "values": {
     "0.4": {
      "B1": 0.1265909859031606,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.08894840036555732,
+     "B1_coverage": 1.0,
      "ours_full": 0.08101579477394391,
-     "ours_lazy": 0.06334879242416212
+     "ours_full_coverage": 0.9975,
+     "ours_lazy": 0.06334879242416212,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.06167103938092968,
+     "B1_coverage": 1.0,
      "ours_full": 0.0513595166163142,
-     "ours_lazy": 0.0513595166163142
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.0513595166163142,
+     "ours_lazy_coverage": 1.0
     }
    }
   },
@@ -193,18 +242,25 @@
    "values": {
     "0.4": {
      "B1": 0.11684785862757455,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.08506873633976281,
+     "B1_coverage": 1.0,
      "ours_full": 0.10568029309702333,
-     "ours_lazy": 0.08982036257464796
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.08982036257464796,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.06152322838819102,
+     "B1_coverage": 1.0,
      "ours_full": 0.08022059589519659,
-     "ours_lazy": 0.06359746294235084
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.06359746294235084,
+     "ours_lazy_coverage": 1.0
     }
    }
   }
@@ -215,18 +271,25 @@
    "values": {
     "0.4": {
      "B1": 0.13983392692041094,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.08399999999999999,
+     "B1_coverage": 1.0,
      "ours_full": 0.08399999999999999,
-     "ours_lazy": 0.08399999999999999
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.08399999999999999,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.08399999999999999,
+     "B1_coverage": 1.0,
      "ours_full": 0.08399999999999999,
-     "ours_lazy": 0.08399999999999999
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.08399999999999999,
+     "ours_lazy_coverage": 1.0
     }
    }
   },
@@ -235,18 +298,25 @@
    "values": {
     "0.4": {
      "B1": 0.18456599262142995,
+     "B1_coverage": 1.0,
      "ours_full": Infinity,
      "ours_lazy": Infinity
     },
     "0.6": {
      "B1": 0.12000000000000004,
+     "B1_coverage": 1.0,
      "ours_full": 0.17698316073819087,
-     "ours_lazy": 0.12000000000000004
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.12000000000000004,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.12000000000000004,
+     "B1_coverage": 1.0,
      "ours_full": 0.12000000000000004,
-     "ours_lazy": 0.12000000000000004
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.12000000000000004,
+     "ours_lazy_coverage": 1.0
     }
    }
   }
@@ -257,18 +327,27 @@
    "values": {
     "0.4": {
      "B1": 0.1415939095582051,
+     "B1_coverage": 1.0,
      "ours_full": 0.14982463866773646,
-     "ours_lazy": 0.13267602110693058
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.13267602110693058,
+     "ours_lazy_coverage": 1.0
     },
     "0.6": {
      "B1": 0.0942292490118577,
+     "B1_coverage": 1.0,
      "ours_full": 0.08695652173913042,
-     "ours_lazy": 0.08695652173913042
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.08695652173913042,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.08695652173913042,
+     "B1_coverage": 1.0,
      "ours_full": 0.08695652173913042,
-     "ours_lazy": 0.08695652173913042
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.08695652173913042,
+     "ours_lazy_coverage": 1.0
     }
    }
   },
@@ -277,18 +356,27 @@
    "values": {
     "0.4": {
      "B1": 0.15074046286189854,
+     "B1_coverage": 1.0,
      "ours_full": 0.19097206632699978,
-     "ours_lazy": 0.16110207168346782
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.16110207168346782,
+     "ours_lazy_coverage": 1.0
     },
     "0.6": {
      "B1": 0.1056620553359684,
+     "B1_coverage": 1.0,
      "ours_full": 0.13104286411665592,
-     "ours_lazy": 0.11335968379446641
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.11335968379446641,
+     "ours_lazy_coverage": 1.0
     },
     "0.8": {
      "B1": 0.09486166007905136,
+     "B1_coverage": 1.0,
      "ours_full": 0.09486166007905136,
-     "ours_lazy": 0.09486166007905136
+     "ours_full_coverage": 1.0,
+     "ours_lazy": 0.09486166007905136,
+     "ours_lazy_coverage": 1.0
     }
    }
   }

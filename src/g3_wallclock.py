@@ -112,6 +112,7 @@ for lab, td in TRUTH:
                 sim = simulate("harm_B1" if m == "B1" else "harm_ours", V, slices, 0.05, dp, 0.0, 400,
                                np.random.default_rng(1), f)
                 vals[key] = sim["worst_ucb_mean"]
+                vals[key + "_coverage"] = sim["coverage"]  # simultaneous over slices, MC
             row[b] = vals
             fm = lambda x: f"{x:.3f}" if np.isfinite(x) else "inf"
             rat = lambda k: vals["B1"] / vals[k] if np.isfinite(vals[k]) else 0.0

@@ -1,0 +1,1 @@
+job=2299453 node=h002 name=qwen2.5-7b-instruct maxseqs=32 extra=--enforce-eager restart=0

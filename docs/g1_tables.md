@@ -87,10 +87,60 @@ Cells: B1 / ours / best other valid baseline (name), ratio = min(B1, other) / ou
 | Qwen2.5-3B GSM8K imatrix | Q6_K | 0.060 | 0.121 / 0.102 / 0.144 (B2), 1.19 | 0.092 / 0.060 / 0.105 (B2), **1.53** | 0.093 / 0.099 / 0.105 (B2), 0.94 |
 | Qwen2.5-3B MMLU-Pro 1k imatrix | Q6_K | 0.120 | 0.120 / 0.120 / 0.120 (B2), 1.00 | 0.120 / 0.120 / 0.120 (B2), 1.00 | 0.120 / 0.120 / 0.120 (B2), 1.00 |
 
+## Table 3. G3 at equal wall-clock (fitted wall-clock model; RESULTS.md sec. 47, 49-50)
+
+Cells: B1 / ours (full screening prefill, as implemented), ratio; [min simultaneous coverage of B1 and ours over MC reps]. inf: the method's design alone exceeds the budget.
+
+| Parent / task | version | batch | b = 0.4 | b = 0.6 | b = 0.8 |
+|---|---|---|---|---|---|
+| Qwen2.5-3B GSM8K | Q8_0 | 32 | 0.081 / 0.029, **2.78** [1.000] | 0.055 / 0.029, **1.87** [1.000] | 0.029 / 0.029, 1.00 [1.000] |
+| Qwen2.5-3B GSM8K | Q6_K | 32 | 0.130 / 0.122, 1.07 [1.000] | 0.098 / 0.082, 1.19 [1.000] | 0.063 / 0.063, 1.00 [1.000] |
+| Qwen2.5-7B GSM8K | Q8_0 | 32 | 0.078 / 0.026, **2.95** [1.000] | 0.054 / 0.026, **2.04** [1.000] | 0.038 / 0.026, 1.46 [1.000] |
+| Qwen2.5-7B GSM8K | Q6_K | 32 | 0.104 / 0.085, 1.21 [1.000] | 0.077 / 0.044, **1.76** [1.000] | 0.060 / 0.044, 1.36 [1.000] |
+| Qwen2.5-14B GSM8K | Q8_0 | 32 | 0.067 / 0.031, **2.17** [1.000] | 0.043 / 0.015, **2.79** [1.000] | 0.029 / 0.015, **1.87** [1.000] |
+| Qwen2.5-14B GSM8K | Q6_K | 32 | 0.097 / 0.105, 0.93 [1.000] | 0.071 / 0.064, 1.11 [1.000] | 0.053 / 0.035, **1.51** [1.000] |
+| Llama-3.1-8B GSM8K | Q8_0 | 32 | 0.087 / 0.041, **2.14** [1.000] | 0.058 / 0.030, **1.93** [1.000] | 0.030 / 0.030, 1.00 [1.000] |
+| Llama-3.1-8B GSM8K | Q6_K | 32 | 0.116 / 0.109, 1.06 [1.000] | 0.089 / 0.076, 1.16 [1.000] | 0.060 / 0.060, 1.00 [1.000] |
+| Phi-3.5-mini GSM8K | Q8_0 | 32 | 0.111 / 0.051, **2.17** [1.000] | 0.083 / 0.051, **1.62** [0.998] | 0.051 / 0.051, 1.00 [1.000] |
+| Phi-3.5-mini GSM8K | Q6_K | 32 | 0.106 / 0.085, 1.25 [1.000] | 0.077 / 0.047, **1.65** [1.000] | 0.047 / 0.047, 1.00 [1.000] |
+| Qwen2.5-3B GSM8K | Q8_0 | 256 | inf / inf [1.000] | 0.068 / inf [1.000] | 0.041 / 0.063, 0.66 [1.000] |
+| Qwen2.5-3B GSM8K | Q6_K | 256 | 0.167 / inf [1.000] | 0.107 / inf [1.000] | 0.071 / 0.158, 0.45 [1.000] |
+| Qwen2.5-7B GSM8K | Q8_0 | 256 | inf / inf [1.000] | 0.061 / inf [0.998] | 0.042 / inf [1.000] |
+| Qwen2.5-7B GSM8K | Q6_K | 256 | 0.125 / inf [1.000] | 0.085 / inf [1.000] | 0.063 / inf [1.000] |
+| Qwen2.5-14B GSM8K | Q8_0 | 256 | 0.066 / inf [1.000] | 0.043 / 0.050, 0.85 [1.000] | 0.029 / 0.015, **1.87** [1.000] |
+| Qwen2.5-14B GSM8K | Q6_K | 256 | 0.097 / inf [1.000] | 0.071 / inf [1.000] | 0.053 / 0.078, 0.68 [1.000] |
+| Llama-3.1-8B GSM8K | Q8_0 | 256 | 0.098 / inf [1.000] | 0.067 / inf [1.000] | 0.044 / 0.063, 0.70 [1.000] |
+| Llama-3.1-8B GSM8K | Q6_K | 256 | 0.130 / inf [1.000] | 0.090 / inf [1.000] | 0.076 / 0.120, 0.64 [1.000] |
+| Phi-3.5-mini GSM8K | Q8_0 | 256 | 0.127 / inf [1.000] | 0.089 / 0.081, 1.10 [0.998] | 0.062 / 0.051, 1.20 [1.000] |
+| Phi-3.5-mini GSM8K | Q6_K | 256 | 0.117 / inf [1.000] | 0.085 / 0.106, 0.80 [1.000] | 0.062 / 0.080, 0.77 [1.000] |
+| Qwen2.5-3B MMLU-Pro 1k | Q8_0 | 256 | 0.140 / inf [1.000] | 0.084 / 0.084, 1.00 [1.000] | 0.084 / 0.084, 1.00 [1.000] |
+| Qwen2.5-3B MMLU-Pro 1k | Q6_K | 256 | 0.185 / inf [1.000] | 0.120 / 0.177, 0.68 [1.000] | 0.120 / 0.120, 1.00 [1.000] |
+| Qwen2.5-14B MMLU-Pro 1k | Q8_0 | 256 | 0.142 / 0.150, 0.95 [1.000] | 0.094 / 0.087, 1.08 [1.000] | 0.087 / 0.087, 1.00 [1.000] |
+| Qwen2.5-14B MMLU-Pro 1k | Q6_K | 256 | 0.151 / 0.191, 0.79 [1.000] | 0.106 / 0.131, 0.81 [1.000] | 0.095 / 0.095, 1.00 [1.000] |
+
+## Table 4. Measured end-to-end speedup, full generation / (screening prefill + continuation)
+
+fp32, A100, GSM8K 1,319; best of with / without prefix caching. Lemma 3 violations are 0 in every run.
+
+| Parent | version | batch 32 | batch 64 | batch 128 | batch 256 |
+|---|---|---|---|---|---|
+| Qwen2.5-3B | Q8_0 | 2.26 | 1.80 | 1.26 | 1.07 |
+| Qwen2.5-3B | Q6_K | 1.21 | - | - | 0.76 |
+| Qwen2.5-7B | Q8_0 | 2.50 | - | - | - |
+| Qwen2.5-7B | Q6_K | 1.49 | - | - | - |
+| Qwen2.5-14B | Q8_0 | 2.07 | - | - | - |
+| Qwen2.5-14B | Q6_K | 1.21 | - | - | - |
+| Llama-3.1-8B | Q8_0 | 1.90 | - | - | - |
+| Llama-3.1-8B | Q6_K | 1.23 | - | - | - |
+| Phi-3.5-mini | Q8_0 | 2.36 | - | - | - |
+| Phi-3.5-mini | Q6_K | 1.43 | - | - | - |
+
 ## Figures
 
+- `results/figures/speedup_vs_batch.pdf`: measured end-to-end speedup vs decode batch.
+- `results/figures/g3_wallclock.pdf`: G3 ratios at equal wall-clock, batch 256 and 32.
 - `results/figures/margin_law.pdf`: observed vs predicted per-token divergence rate (all cases).
-- `results/figures/break_even.pdf`: regime map, break-even audit rate vs r.
+- `results/figures/break_even.pdf`: regime map, break-even audit rate vs r (token cost model).
 - `results/figures/baselines_q8.pdf`: Q8_0 worst-slice UCB by method.
 - `results/figures/cost_law.pdf`: r vs mean decode batch.
 - Margin-law table: `results/figures/summary_tables.md`.
